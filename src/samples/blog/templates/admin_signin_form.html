@@ -1,0 +1,13 @@
+<h2>Sign in</h2>
+<% with h.main_block(): %>
+
+  <% h.show_errors(c.errors) %>
+
+  <form action="<%= app.url.admin_signin() %>" method="POST"><p>
+    <label for="name"> Name: </label><input type="text" name="name" value=""/> <br />
+    <label for="password"> Password: </label><input type="password" name="password" value=""/> <br />
+    <input type="submit" value="signin" />
+  </p></form>
+  <% %>
+
+<%= app.renderer.with_layout_file("layout") %>

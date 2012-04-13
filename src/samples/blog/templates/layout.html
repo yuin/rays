@@ -1,0 +1,170 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css; charset=UTF8" />
+    <link rel="stylesheet" href="<%= app.url.static_file("base.css") %>" type="text/css" media="screen" />
+    <title><%= c.title %></title>
+    <style type="text/css">
+
+    div.error {
+      color : #ff0000;
+      margin : 2em;
+      border : 1px solid #333;
+    }
+
+    ul.topMenu {
+      margin : 1em 0 1em 0;
+      border-bottom: 3px solid #999;
+    }
+
+    ul.topMenu li {
+      margin-left: 1em;
+      float : left;
+    }
+
+    div.col {
+      width:80%;
+      left:10%;
+      float:left;
+      position:relative;
+      padding:1em;
+      overflow:hidden;
+    }
+
+    #header h1 {
+      border-bottom: 3px solid #999;
+      border-left  : 0;
+      background: #fff;
+    }
+
+    div.hentry h2 {
+      border-bottom: 1px dotted #999;
+      margin-bottom: 1em;
+    }
+
+    div.hentry h2 a {
+      color: #000;
+      text-decoration: none;
+    }
+
+    div.hentry h2 a:hover {
+      color: #000;
+      text-decoration: none;
+    }
+
+    div.hentry div.entry-content {
+      border-bottom: 1px solid #999;
+    }
+
+    div.hentry div.entry-content ul{
+      margin:0.5em 0 2em 0;
+    }
+
+    div.hentry div.entry-content ul ul{
+      margin:0.5em 0 0.5em 0;
+    }
+
+    div.hentry div.entry-content ul ul ul{
+      margin:0.5em 0 0.5em 0;
+    }
+
+    div.hentry div.entry-content ul li{
+      list-style-type:square;
+      margin:0.5em 0 0.5em 2em;
+    }
+
+    div.hentry dl.entry-metadata {
+      float: right;
+      font-size: 0.8em;
+      margin: 0.5em 0em 2em 0em;
+    }
+
+    div.hentry dl.entry-metadata dt {
+      float: left;
+      padding-left:0.5em;
+    }
+
+    div.hentry dl.entry-metadata dd{
+      float: left;
+      padding-right:0.5em;
+      margin-left: 0em;
+      padding-left: 0.5em;
+      border-right: 1px solid #999;
+    }
+
+    
+    /* Pagination */
+    #pagination {
+      padding: 1px;
+    }
+    
+    #pagination li{
+      border:0; 
+      padding:0;
+      margin-right:2px;
+      font-size:0.75em;
+      list-style:none;
+      float:left;
+      display:inline;
+    }
+    
+    #pagination a{
+      border:solid 1px #ccc;
+      display:block;
+      margin: 1px;
+    }
+    
+    #pagination .previous-off,
+    #pagination .next-off {
+      color:#666;
+      display:block;
+      font-weight:bold;
+      padding:3px 4px;
+    }
+    #pagination .next a,
+    #pagination .previous a {
+      font-weight:bold;
+      display:block;
+      border:solid 1px #ccc;
+    }
+    
+    #pagination .active{
+      color:#333;
+      font-weight:bold;
+      padding:4px 6px 6px;
+      display:block;
+    }
+    
+    #pagination a:link,
+    #pagination a:visited {
+      padding:3px 6px;
+      display:block;
+      text-decoration:none;
+    }
+    
+    #pagination a:hover {
+      display:block;
+      border:solid 1px #666;
+    }
+
+    </style>
+  </head>
+  <body>
+    <div id="header" class="col clearfix">
+      <h1> <a href="<%= app.url.index() %>"><%= app.vars.blog_title %></a></h1>
+        <div style="float:right;width:5em;">
+        <a href="<%= app.url.admin_index() %>">Admin</a>
+        </div>
+    </div>
+    <div class="col">
+
+      <%=r body %>
+
+    </div>
+
+    <div id="footer" class="col">
+    </div>
+  </body>
+</html>

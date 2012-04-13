@@ -1,0 +1,11 @@
+<%=r app.renderer._admin_menu({"c":c}) %>
+<% with h.main_block() : %>
+  <% h.show_errors(c.errors) %>
+  <form action="<%= app.url.admin_entry_create() %>" method="POST"><p>
+    <label for="entry[title]"> Title: </label><input type="text" name="entry[title]" value="<%= c.entry.title %>"/> <br />
+    <label for="entry[body]"> Body: </label><br /><textarea cols="20" rows="10" name="entry[body]"><%=r c.entry.body %></textarea><br />
+    <input type="submit" value="create" />
+  </p></form>
+  <% %>
+
+<%= app.renderer.with_layout_file("layout") %>

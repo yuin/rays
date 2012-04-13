@@ -1,0 +1,178 @@
+/*************************
+ * {{{ Reset(based on Eric A. Meyer's Reset CSS & YUI Font)
+ */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, font, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  vertical-align: baseline;
+  background: transparent;
+}
+body { font:13px/1.231 arial,helvetica,clean,sans-serif;}
+*+html body { font-size:small; }
+* html body { font-size:x-small; }
+body * {line-height:1.22em;}
+ol, ul { list-style: none; }
+blockquote, q { quotes: none; }
+:focus { outline: 0; }
+ins { text-decoration: none; }
+del { text-decoration: line-through; }
+blockquote:before, blockquote:after,
+q:before, q:after {
+  content: '';
+  content: none;
+}
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  font-size:inherit;
+  font-size:100%;
+}
+select, input, textarea, password {font:99% arial,helvetica,clean,sans-serif;}
+* html pre,* html code,* html kbd,* html samp,* html tt{ font-size:100%; }
+*+html pre, *+html code, *+html kbd, *+html samp, *+html tt{ font-size:100%; }
+
+h1,h2,h3,h4,h5,h6 { font-weight: normal; }
+h1 { font-size: 153.9%;}
+h2 { font-size: 138.5%; }
+h3 { font-size: 123.1%; }
+h4 { font-size: 116%; }
+h5 { font-size: 116%; }
+h6 { font-size: 116%; }
+/*************************
+ * }}}
+ *************************/
+
+/*************************
+ * {{{ Clear fix
+ *************************/
+.clearfix:after{ 
+  content:"."; 
+  display:block; 
+  height:0; 
+  clear: both; 
+  visibility:hidden; 
+} 
+.clearfix { display: inline-block; } 
+.clearfix { display: block; }
+/* For MAC-IE \*//*/ 
+.clearfix { overflow: hidden; } 
+/* */
+/*************************
+ * }}}
+ *************************/
+
+/*************************
+ * {{{ Base styles
+ *************************/
+body {
+  width: 100%;
+  background: #fff;
+  min-width: 600px;  
+  color: #333;
+}
+
+h1,h2,h3,h4,h5,h6 {
+  color: #000;
+  border-left: 0.5em solid #ccc;
+  padding-left: 0.5em;
+  background-color: #eee;
+}
+
+a {
+  color: #7f7f7f; 
+}
+
+a:hover {
+  color: #000; 
+}
+
+p {
+  padding: 0 0 1em 0;
+}
+
+/* basic form {{{ */
+form.basic {
+  margin: 0;
+  padding: 0;
+  min-width: 500px;
+  max-width: 600px;
+  width: 560px; 
+}
+
+form.basic fieldset {
+  border: 1px solid #000;
+  padding: 1em;
+  margin: 0;
+}
+
+form.basic fieldset legend {
+  font-size: 116%;
+}
+
+form.basic label { 
+  display: block;
+  clear: left;
+  float: left; 
+  width: 10em; 
+  padding: 0; 
+  margin: 0.5em 0 0;
+  text-align: right; 
+}
+
+form.basic input, form.basic textarea, form.basic select{
+  width:auto;
+  margin:0.5em 0 0 1em;
+}
+
+textarea { overflow: auto; }
+
+form.basic small {
+  display: block;
+  margin: 0 0 0.5em 12.75em;
+  padding: 1px 3px;
+  font-size: 85%;
+}
+
+form.basic small.error {
+  color: #ff0000;
+  font-weight: bold;
+}
+
+form.basic .required{font-weight:bold;}
+form.basic  br { clear:left; }
+
+input[type="text"], input[type="submit"], input[type="password"], 
+input[type="file"], input[type="reset"], button, textarea {
+  border: 1px solid #000;
+}
+/* }}} */
+
+/* blockquote, code, pre, etc {{{ */
+blockquote{ 
+  margin: 1.5em 0 0 1.5em;
+  padding-left: 1em;
+  border-left: 2px solid #ccc;
+}
+
+pre{
+  width: 100%;
+  padding: 1em 0;
+  overflow: auto;
+  white-space: pre;
+  border-top: 1px dotted #333;
+  border-bottom: 1px dotted #333;
+}
+/* }}} */
+/*************************
+ * }}}
+ *************************/

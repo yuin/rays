@@ -1,0 +1,7 @@
+<div class="hfeed">
+  <%- for entry in c.entries: -%>
+    <%=r app.renderer._entry({"entry":entry, "c":c}) %>
+    <% %>
+</div>
+<%=r h.pagination(c.count, app.req.input.get("page", 1)) %>
+<%= app.renderer.with_layout_file("layout") %>

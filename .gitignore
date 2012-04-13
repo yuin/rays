@@ -1,0 +1,11 @@
+build*
+dist/*
+rays.egg-info/*
+.tox/*
+docs/build/doctrees/*
+
+.coverage
+tox.ini.local
+
+__pycache__
+*.pyc

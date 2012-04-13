@@ -1,0 +1,8 @@
+<% with h.capture("block"): %>
+  ok
+<% end %>
+<% h.concat(u_("連結")) %>
+<%- assert h.captured("block").strip() == "ok" -%>
+<div>
+  <%= block %>
+</div>

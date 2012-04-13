@@ -1,0 +1,7 @@
+<%=r app.renderer._admin_menu({"c":c}) %>
+
+<% if "message" in app.session["flash"]: %>
+  <% h.show_message(app.session["flash"]["message"]) %>
+  <% %>
+
+<%= app.renderer.with_layout_file("layout") %>

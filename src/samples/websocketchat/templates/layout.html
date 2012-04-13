@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css; charset=UTF8" />
+    <link rel="stylesheet" href="/statics/base.css" type="text/css" media="screen" />
+    <title>rays websocket chat sample</title>
+    <style type="text/css">
+
+      div.col {
+        width:80%;
+        left:10%;
+        float:left;
+        position:relative;
+        padding:1em;
+        overflow:hidden;
+      }
+
+      #header h1 {
+        border-bottom: 3px solid #999;
+        border-left  : 0;
+        background: #fff;
+      }
+
+      p.message {
+        border-bottom: 1px solid #333333;
+        padding: 0;
+      }
+
+      #input {
+        border-bottom: 3px solid #333333;
+        border-left: 3px solid #333333;
+        padding: 10px;
+      }
+    </style>
+    <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+    <script type="text/javascript"> google.load("jquery", "1.7.1"); </script>
+    <script type="text/javascript">
+    // <![CDATA[
+
+    $(function() {
+        window.username = "";
+        if (window.WebSocket) {
+        } else if (window.MozWebSocket) {
+          window.WebSocket = MozWebSocket;
+        } else {
+          $(document.body).text("Your browser does not support the WebSocket.");
+          return;
+        }
+
+        window.username = prompt("Your name");
+        $("#username").text(window.username);
+        ws = new WebSocket("ws://"+location.host+"/chat");
+        ws.onopen = function() {
+        };
+        ws.onmessage = function(e) {
+          $("#messages").prepend($('<p class="message">' + e.data + '</p>'));
+        };
+        $('#submit_button').click(function(){
+            ws.send(window.username + " : " + $('#new_message').val());
+            $('#new_message').val("");
+        });
+    });
+  // ]]>
+  </script>
+  </head>
+
+  <body>
+    <div id="header" class="col clearfix">
+      <h1> rays websocket chat sample</h1>
+        <div style="float:right;width:10em;">
+          Name: <span id="username"></span>
+        </div>
+    </div>
+    <div class="col">
+
+      <%=r body %>
+
+    </div>
+
+    <div id="footer" class="col">
+    </div>
+
+  </body>
+
+</html>

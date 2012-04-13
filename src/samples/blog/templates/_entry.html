@@ -1,0 +1,10 @@
+<div class="hentry clearfix">
+  <h2 class="entry-title"> <a href="<%= app.url.show_entry(entry.id)%>"><%= entry.title %></a></h2>
+  <div class="entry-content">
+    <%=r h.format_body(entry.body) %>
+  </div>
+  <dl class="entry-metadata">
+    <dt>Posted at:</dt> 
+    <dd><%=r h.hatom_published(entry) %></dd>
+  </dl>
+</div>
