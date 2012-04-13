@@ -1,0 +1,181 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Changes &mdash; rays 0.4.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.4.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="rays 0.4.0 documentation" href="index.html" />
+    <link rel="prev" title="Development" href="development.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="development.html" title="Development"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">rays 0.4.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="changes">
+<h1>Changes<a class="headerlink" href="#changes" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="april-12-2012">
+<h2>0.4.0 (April 12, 2012):<a class="headerlink" href="#april-12-2012" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Improved: <strong>rays now supports Python3.2 .</strong></li>
+<li>Dropped:  <strong>rays drops Python2.7&gt; supports.</strong></li>
+<li>New: Application.logger</li>
+<li>New: Application.copy_tls_property</li>
+<li>New: Applicaiton.get_url_builder</li>
+<li>New: Application.serve_forever</li>
+<li>New: Application.run_gevent</li>
+<li>New: Request object supports Accept-* headers</li>
+<li>New: Request.websocket</li>
+<li>New: Request.is_xml_http_request</li>
+<li>New: Request.http_version</li>
+<li>New: Response.not_modified</li>
+<li>New: AsyncExtension</li>
+<li>Improved: app.url now supports new options, _ssl and _query .</li>
+<li>Improved: StaticFileExtension now use caches aggressively.</li>
+<li>Fixed: autoreloading does not work with <tt class="docutils literal"><span class="pre">run_simple</span></tt> . (Thanks Nobuo Okazaki)</li>
+</ul>
+</div>
+<div class="section" id="march-2-2010">
+<h2>0.3.0 (March 2, 2010):<a class="headerlink" href="#march-2-2010" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>New: DefaultAttrDict, A defaultdict like object, whose items also be accessible through object attributes.</li>
+<li>New: Context.d, a user namespace for context objects.</li>
+<li>New: Application.d, a user namespace for application global variables.</li>
+<li>New: Request.method, Request.ua</li>
+<li>New: Application.run_fapws</li>
+<li>New: without_filters. &#8220;action&#8221; functions can now be executed without calling any filters.</li>
+<li>New: Context.d, Application.d</li>
+<li>Fixed: Database transaction bug with python2.5</li>
+<li>Fixed: File upload bugs</li>
+<li>Fixed: Embpy parser bugs</li>
+<li>Fixed: Autoreload bugs</li>
+<li>Changed: Database.select(<strong>Backward-imcompatible</strong>).</li>
+</ul>
+</div>
+<div class="section" id="august-15-2009">
+<h2>0.2.0 (August 15, 2009):<a class="headerlink" href="#august-15-2009" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>New: Session support</li>
+<li>New: Sample codes</li>
+<li>Many backward-incompatible changes</li>
+</ul>
+</div>
+<div class="section" id="july-26-2009">
+<h2>0.1.1 (July 26, 2009):<a class="headerlink" href="#july-26-2009" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Improved: Muti-threading support</li>
+<li>New: Context.db, Context.renderer</li>
+<li>New: Application.create_db_session</li>
+<li>Removed: Application.db</li>
+</ul>
+</div>
+<div class="section" id="july-21-2009">
+<h2>0.1.0 (July 21, 2009):<a class="headerlink" href="#july-21-2009" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Initial release.</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Changes</a><ul>
+<li><a class="reference internal" href="#april-12-2012">0.4.0 (April 12, 2012):</a></li>
+<li><a class="reference internal" href="#march-2-2010">0.3.0 (March 2, 2010):</a></li>
+<li><a class="reference internal" href="#august-15-2009">0.2.0 (August 15, 2009):</a></li>
+<li><a class="reference internal" href="#july-26-2009">0.1.1 (July 26, 2009):</a></li>
+<li><a class="reference internal" href="#july-21-2009">0.1.0 (July 21, 2009):</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="development.html"
+                        title="previous chapter">Development</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/changes.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="development.html" title="Development"
+             >previous</a> |</li>
+        <li><a href="index.html">rays 0.4.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2009-2012, Yusuke Inuzuka.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

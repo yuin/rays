@@ -1,0 +1,1383 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>rays - A “LESS PAIN” lightweight WSGI compatible web framework &mdash; rays 0.4.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.4.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="rays 0.4.0 documentation" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="index.html">rays 0.4.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <span class="target" id="module-rays"></span><div class="section" id="rays-a-less-pain-lightweight-wsgi-compatible-web-framework">
+<h1>rays - A &#8220;LESS PAIN&#8221; lightweight WSGI compatible web framework<a class="headerlink" href="#rays-a-less-pain-lightweight-wsgi-compatible-web-framework" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="licence-mit">
+<h2>Licence (MIT)<a class="headerlink" href="#licence-mit" title="Permalink to this headline">¶</a></h2>
+<p>Copyright (c) 2009-2012, Yusuke Inuzuka.</p>
+<p>Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the &#8220;Software&#8221;), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:</p>
+<p>The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.</p>
+<p>THE SOFTWARE IS PROVIDED &#8220;AS IS&#8221;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.</p>
+<dl class="class">
+<dt id="rays.Accept">
+<em class="property">class </em><tt class="descclassname">rays.</tt><tt class="descname">Accept</tt><big>(</big><em>text</em><big>)</big><a class="headerlink" href="#rays.Accept" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handles &#8220;Accept-*&#8221; headers.(See RFC2616 Section 14.1 - 14.4)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Attributes :</th><td class="field-body"><dl class="first last docutils">
+<dt>text</dt>
+<dd><p class="first last">Original header text.</p>
+</dd>
+<dt>values</dt>
+<dd><p class="first last">List of AcceptanceValue objects.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="rays.Accept.accepts">
+<tt class="descname">accepts</tt><big>(</big><em>type</em>, <em>sub_type='*'</em>, <em>params=None</em><big>)</big><a class="headerlink" href="#rays.Accept.accepts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the best matched AcceptanceValue object if the given type is acceptable for the response, otherwise None.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="rays.AcceptanceValue">
+<em class="property">class </em><tt class="descclassname">rays.</tt><tt class="descname">AcceptanceValue</tt><big>(</big><em>main_type</em>, <em>sub_type</em>, <em>params</em><big>)</big><a class="headerlink" href="#rays.AcceptanceValue" title="Permalink to this definition">¶</a></dt>
+<dd><p>&#8216;Accept-*&#8217; header value.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Attributes :</th><td class="field-body"><dl class="first last docutils">
+<dt>main_type     </dt>
+<dd><p class="first last">Main type.</p>
+</dd>
+<dt>sub_type</dt>
+<dd><p class="first last">Sub type.</p>
+</dd>
+<dt>q</dt>
+<dd><p class="first last">The type quality factor associated with this type.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="rays.Action">
+<em class="property">class </em><tt class="descclassname">rays.</tt><tt class="descname">Action</tt><big>(</big><em>app</em>, <em>func</em><big>)</big><a class="headerlink" href="#rays.Action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Action.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Attributes :</th><td class="field-body"><dl class="first last docutils">
+<dt>param_types     </dt>
+<dd><p class="first last">URL parameter types</p>
+</dd>
+<dt>name</dt>
+<dd><p class="first last">Action name</p>
+</dd>
+<dt>path_pattern</dt>
+<dd><p class="first last">URL pattern string</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="rays.Action.append_filter">
+<tt class="descname">append_filter</tt><big>(</big><em>filter</em><big>)</big><a class="headerlink" href="#rays.Action.append_filter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a <tt class="docutils literal"><span class="pre">filter</span></tt> to the action as a filter.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rays.Action.match">
+<tt class="descname">match</tt><big>(</big><em>str</em><big>)</big><a class="headerlink" href="#rays.Action.match" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a MatchObject object if the given string match the path pattern, Otherwise None.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rays.Action.perform_with_filters">
+<tt class="descname">perform_with_filters</tt><big>(</big><em>*a</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#rays.Action.perform_with_filters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs this action with filters.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="rays.Application">
+<em class="property">class </em><tt class="descclassname">rays.</tt><tt class="descname">Application</tt><big>(</big><em>base='/'</em>, <em>charset='UTF-8'</em>, <em>debug=False</em><big>)</big><a class="headerlink" href="#rays.Application" title="Permalink to this definition">¶</a></dt>
+<dd><p>Application to dispatch requests based on HTTP methods and path.</p>
+<p>An Application object is a WSGI callable object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Attributes :</th><td class="field-body"><dl class="first last docutils">
+<dt>base     </dt>
+<dd><p class="first last">URL base path</p>
+</dd>
+<dt>charset </dt>
+<dd><p class="first last">Character encoding that this application uses</p>
+</dd>
+<dt>debug</dt>
+<dd><p class="first last">If this member is True, rays prints verbose message on its bevavior and 
+An autoreload feature is enabled in <tt class="docutils literal"><span class="pre">run_xxx()</span></tt> methods.</p>
+</dd>
+<dt>host</dt>
+<dd><p class="first last">Host name such as &#8220;localhost&#8221;</p>
+</dd>
+<dt>ext</dt>
+<dd><p class="first last">Namespace for extensions</p>
+</dd>
+<dt>vars</dt>
+<dd><p class="first last">rays.DefaultAttrDict object, an user namespace for application global variables.</p>
+</dd>
+<dt>req</dt>
+<dd><p class="first last">(Thread local) rays.Request object.</p>
+</dd>
+<dt>res</dt>
+<dd><p class="first last">(Thread local) rays.Response object.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="rays.Application.apply_filter">
+<tt class="descname">apply_filter</tt><big>(</big><em>filter_func</em><big>)</big><a class="headerlink" href="#rays.Application.apply_filter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a <tt class="docutils literal"><span class="pre">filter_func</span></tt> to a decorated action as a filter.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rays.Application.config">
+<tt class="descname">config</tt><big>(</big><em>name</em>, <em>value=None</em><big>)</big><a class="headerlink" href="#rays.Application.config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the valule for the configurations.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Available configuration parameters:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><ul class="first last">
+<li><p class="first">base(unicode)</p>
+</li>
+<li><p class="first">charset(unicode)</p>
+</li>
+<li><p class="first">debug(Boolean)</p>
+</li>
+<li><p class="first">logger : logging.Logger object( in the Python standard libraries )</p>
+</li>
+<li><dl class="first docutils">
+<dt>renderer <span class="classifier-delimiter">:</span> <span class="classifier">dict</span></dt>
+<dd><ul class="first last simple">
+<li>template_dir : unicode, default <tt class="docutils literal"><span class="pre">&quot;./templates&quot;</span></tt></li>
+<li>cache_dir    : unicode, default <tt class="docutils literal"><span class="pre">&quot;./caches&quot;</span></tt></li>
+<li>template_globals : dict</li>
+<li>encoding : unicode, default <tt class="docutils literal"><span class="pre">utf8</span></tt></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>ExtensionLoader: dict</dt>
+<dd><ul class="first last simple">
+<li>module : extension module object, See Extension documentations for further details.</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="rays.Application.copy_tls_property">
+<tt class="descname">copy_tls_property</tt><big>(</big><em>dct=None</em><big>)</big><a class="headerlink" href="#rays.Application.copy_tls_property" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copies thread local data to a dictionary.
+rays.Applicaion object holds thread local data whose 
+values are request specific.
+If you need to create child threads in a HTTP request, you must
+copy these data to the child threads.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">make_worker</span><span class="p">(</span><span class="n">tls</span><span class="p">):</span>
+<span class="gp">... </span>  <span class="k">def</span> <span class="nf">run</span><span class="p">():</span>
+<span class="gp">... </span>    <span class="n">app</span><span class="o">.</span><span class="n">copy_tls_property</span><span class="p">(</span><span class="n">tls</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="c"># operations...</span>
+<span class="gp">... </span>  <span class="k">return</span> <span class="n">run</span>
+<span class="gp">... </span><span class="nd">@app.get</span><span class="p">(</span><span class="s">&quot;index&quot;</span><span class="p">)</span>
+<span class="gp">... </span><span class="k">def</span> <span class="nf">index</span><span class="p">():</span>
+<span class="gp">... </span>  <span class="n">t</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">make_worker</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">copy_tls_property</span><span class="p">()))</span>
+<span class="gp">... </span>  <span class="n">t</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+<span class="gp">... </span>  <span class="n">t</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="rays.Application.define_tls_property">
+<tt class="descname">define_tls_property</tt><big>(</big><em>name</em>, <em>doc</em><big>)</big><a class="headerlink" href="#rays.Application.define_tls_property" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines a thread local property on this object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rays.Application.delete">
+<tt class="descname">delete</tt><big>(</big><em>pattern</em><big>)</big><a class="headerlink" href="#rays.Application.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Binds a function to a DELETE request path.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rays.Application.error">
+<tt class="descname">error</tt><big>(</big><em>code</em><big>)</big><a class="headerlink" href="#rays.Application.error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds the decorated function to this application as a error handler.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rays.Application.filter">
+<tt class="descname">filter</tt><big>(</big><em>*args</em>, <em>**kwds</em><big>)</big><a class="headerlink" href="#rays.Application.filter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds <tt class="docutils literal"><span class="pre">filter_funcs</span></tt> to the current routing context as a filter.</p>
+<p>This method can be used as context managers for a <tt class="docutils literal"><span class="pre">with</span></tt> statement.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rays.Application.get">
+<tt class="descname">get</tt><big>(</big><em>pattern</em><big>)</big><a class="headerlink" href="#rays.Application.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Binds a function to a GET request path.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rays.Application.get_url_builder">
+<tt class="descname">get_url_builder</tt><big>(</big><em>name</em><big>)</big><a class="headerlink" href="#rays.Application.get_url_builder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a url builder for the given named route.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rays.Application.head">
+<tt class="descname">head</tt><big>(</big><em>pattern</em><big>)</big><a class="headerlink" href="#rays.Application.head" title="Permalink to this definition">¶</a></dt>
+<dd><p>Binds a function to a HEAD request path.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rays.Application.helper">
+<tt class="descname">helper</tt><big>(</big><em>f</em><big>)</big><a class="headerlink" href="#rays.Application.helper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a helper function to the renderer.</p>
+<p>This method is suitable to use as a decorator.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rays.Application.post">
+<tt class="descname">post</tt><big>(</big><em>pattern</em><big>)</big><a class="headerlink" href="#rays.Application.post" title="Permalink to this definition">¶</a></dt>
+<dd><p>Binds a function to a POST request path.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rays.Application.put">
+<tt class="descname">put</tt><big>(</big><em>pattern</em><big>)</big><a class="headerlink" href="#rays.Application.put" title="Permalink to this definition">¶</a></dt>
+<dd><p>Binds a function to a PUT request path.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="rays.Application.renderer">
+<tt class="descname">renderer</tt><a class="headerlink" href="#rays.Application.renderer" title="Permalink to this definition">¶</a></dt>
+<dd><p>rays.Renderer object</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rays.Application.route">
+<tt class="descname">route</tt><big>(</big><em>pattern</em>, <em>method='get'</em><big>)</big><a class="headerlink" href="#rays.Application.route" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a route.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rays.Application.run">
+<tt class="descname">run</tt><big>(</big><em>server_func</em>, <em>host='127.0.0.1'</em>, <em>port=8000</em>, <em>middlewares=</em><span class="optional">[</span><span class="optional">]</span>, <em>**kw</em><big>)</big><a class="headerlink" href="#rays.Application.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs this application as a server.
+<tt class="docutils literal"><span class="pre">self.debug</span></tt> will enable an autoreload support.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><dl class="first last docutils">
+<dt>server_func</dt>
+<dd><p class="first last">Function accepts four parameters : WSGI callable, host, port, <tt class="docutils literal"><span class="pre">**kw</span></tt></p>
+</dd>
+<dt>host</dt>
+<dd><p class="first last">Host address</p>
+</dd>
+<dt>port</dt>
+<dd><p class="first last">Server port</p>
+</dd>
+<dt>middlewares</dt>
+<dd><p class="first last">List of WSGI middlewares</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="rays.Application.run_cgi">
+<tt class="descname">run_cgi</tt><big>(</big><em>middlewares=</em><span class="optional">[</span><span class="optional">]</span><big>)</big><a class="headerlink" href="#rays.Application.run_cgi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs this application as a CGI handler.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rays.Application.run_fapws">
+<tt class="descname">run_fapws</tt><big>(</big><em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#rays.Application.run_fapws" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs fapws server hosting this application.
+<strong>An auto-reloading does not work with run_fapws.</strong></p>
+<p>Accepts same parameters as the <tt class="docutils literal"><span class="pre">run</span></tt> method.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rays.Application.run_gevent">
+<tt class="descname">run_gevent</tt><big>(</big><em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#rays.Application.run_gevent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs gevent server hosting this application. 
+See &#8220;Asynchronous applications&#8221; for further documentations.
+<strong>An auto-reloading does not work with run_gevent.</strong></p>
+<p>Accepts same parameters as the <tt class="docutils literal"><span class="pre">run</span></tt> method.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Additional parameters:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><dl class="first last docutils">
+<dt>websocket</dt>
+<dd><p class="first last">acts as a web socket server. (requires gevent-websocket, default: False)</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="rays.Application.run_gunicorn">
+<tt class="descname">run_gunicorn</tt><big>(</big><em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#rays.Application.run_gunicorn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs gunicorn server hosting this application. 
+<strong>An auto-reloading does not work with run_gunicorn.</strong>
+This method use a configuration file if there exists a file with the name <tt class="docutils literal"><span class="pre">gunicorn_conf.py</span></tt>.
+This method accepts same parameters as the <tt class="docutils literal"><span class="pre">gunicorn</span></tt> command. See <tt class="docutils literal"><span class="pre">gunicorn</span> <span class="pre">-h</span></tt>.</p>
+<p>Example:</p>
+<div class="highlight-python"><pre>python index.py --server gunicorn --port 8000 -- -p index.pid -D</pre>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="rays.Application.run_simple">
+<tt class="descname">run_simple</tt><big>(</big><em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#rays.Application.run_simple" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs Python-builtin WSGIServer hosting this application.</p>
+<p>Accepts same parameters as the <tt class="docutils literal"><span class="pre">run</span></tt> method.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rays.Application.serve_forever">
+<tt class="descname">serve_forever</tt><big>(</big><em>**kw</em><big>)</big><a class="headerlink" href="#rays.Application.serve_forever" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handles requests until shutdown.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rays.Application.stop">
+<tt class="descname">stop</tt><big>(</big><big>)</big><a class="headerlink" href="#rays.Application.stop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tells the run_xxx() loop to stop and waits until it does.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="rays.AsyncExtension">
+<em class="property">class </em><tt class="descclassname">rays.</tt><tt class="descname">AsyncExtension</tt><big>(</big><em>app</em><big>)</big><a class="headerlink" href="#rays.AsyncExtension" title="Permalink to this definition">¶</a></dt>
+<dd><p>Asynchronous request extension(requires gevent, greenlet).</p>
+<p>See &#8220;Asynchronous applications&#8221; for further documentations.</p>
+<dl class="method">
+<dt id="rays.AsyncExtension.callback">
+<tt class="descname">callback</tt><big>(</big><em>f</em><big>)</big><a class="headerlink" href="#rays.AsyncExtension.callback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds thread-local data and exception handling functions to the given function.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rays.AsyncExtension.finish">
+<tt class="descname">finish</tt><big>(</big><big>)</big><a class="headerlink" href="#rays.AsyncExtension.finish" title="Permalink to this definition">¶</a></dt>
+<dd><p>Flushes the current output buffer to the client.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rays.AsyncExtension.on_connection_close">
+<tt class="descname">on_connection_close</tt><big>(</big><em>f</em><big>)</big><a class="headerlink" href="#rays.AsyncExtension.on_connection_close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Register a handler function to be called when the connection is closed.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rays.AsyncExtension.write">
+<tt class="descname">write</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#rays.AsyncExtension.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes the given chunk to the current output buffer.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="rays.ClassInitable">
+<em class="property">class </em><tt class="descclassname">rays.</tt><tt class="descname">ClassInitable</tt><a class="headerlink" href="#rays.ClassInitable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base class that provides a convenient way to initialize classes.</p>
+<p>You can define a class_init(cls) method, which will be called when the class is created.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="rays.ClassInitableType">
+<em class="property">class </em><tt class="descclassname">rays.</tt><tt class="descname">ClassInitableType</tt><a class="headerlink" href="#rays.ClassInitableType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Metaclass that provides a convenient way to initialize classes.</p>
+<p>You can define a class_init(cls) method, which will be called when the class is created.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="rays.Database">
+<em class="property">class </em><tt class="descclassname">rays.</tt><tt class="descname">Database</tt><big>(</big><em>connection</em><big>)</big><a class="headerlink" href="#rays.Database" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simple wrapper for sqlite3</p>
+<p>Database tables must have a  column <tt class="docutils literal"><span class="pre">id</span> <span class="pre">INTERGER</span> <span class="pre">NOT</span> <span class="pre">NULL</span> <span class="pre">PRIMARY</span> <span class="pre">KEY</span> <span class="pre">AUTOINCREMENT</span></tt>
+as a prerequisite for using this class.</p>
+<dl class="attribute">
+<dt id="rays.Database.autocommit">
+<tt class="descname">autocommit</tt><a class="headerlink" href="#rays.Database.autocommit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets whether autocommit mode is enabled.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rays.Database.begin">
+<tt class="descname">begin</tt><big>(</big><big>)</big><a class="headerlink" href="#rays.Database.begin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Begins a new transaction.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rays.Database.close">
+<tt class="descname">close</tt><big>(</big><big>)</big><a class="headerlink" href="#rays.Database.close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Closes this database connection.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rays.Database.commit">
+<tt class="descname">commit</tt><big>(</big><big>)</big><a class="headerlink" href="#rays.Database.commit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Commits the transaction.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rays.Database.delete">
+<tt class="descname">delete</tt><big>(</big><em>obj</em><big>)</big><a class="headerlink" href="#rays.Database.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes <tt class="docutils literal"><span class="pre">obj</span></tt> from the table.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rays.Database.execute">
+<tt class="descname">execute</tt><big>(</big><em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#rays.Database.execute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Executes an SQL statement.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">db</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">ext</span><span class="o">.</span><span class="n">database</span><span class="o">.</span><span class="n">create_new_session</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&quot;CREATE TABLE tests(name TEXT)&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&quot;INSERT INTO tests (name) VALUES (&#39;john&#39;)&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&quot;SELECT * FROM tests WHERE name=?&quot;</span><span class="p">,</span> <span class="s">&quot;john&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="rays.Database.insert">
+<tt class="descname">insert</tt><big>(</big><em>obj</em><big>)</big><a class="headerlink" href="#rays.Database.insert" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inserts <tt class="docutils literal"><span class="pre">obj</span></tt> to the database.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rays.Database.rollback">
+<tt class="descname">rollback</tt><big>(</big><big>)</big><a class="headerlink" href="#rays.Database.rollback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Roll backs the transaction.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rays.Database.save">
+<tt class="descname">save</tt><big>(</big><em>obj</em><big>)</big><a class="headerlink" href="#rays.Database.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves the <tt class="docutils literal"><span class="pre">obj</span></tt>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rays.Database.select">
+<tt class="descname">select</tt><big>(</big><em>tables</em>, <em>select='SELECT %(all)s FROM %(tables)s'</em>, <em>cond='1'</em>, <em>values=None</em><big>)</big><a class="headerlink" href="#rays.Database.select" title="Permalink to this definition">¶</a></dt>
+<dd><p>Executes a select query and mapping it <tt class="docutils literal"><span class="pre">tables</span></tt>.</p>
+<dl class="docutils">
+<dt>Example::</dt>
+<dd><div class="first last highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">select</span><span class="p">([</span><span class="n">WebPage</span><span class="p">,</span> <span class="n">WebSite</span><span class="p">],</span> <span class="n">cond</span><span class="o">=</span><span class="s">&quot;WebPage.site_id=WebSite.id and WebPage.id=?&quot;</span><span class="p">,</span><span class="n">values</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">web_page</span><span class="p">,</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">web_site</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">db</span><span class="o">.</span><span class="n">select</span><span class="p">([</span><span class="n">WebPage</span><span class="p">],</span> <span class="n">cond</span><span class="o">=</span><span class="s">&quot;1 ORDER BY created_at DESC&quot;</span><span class="p">)</span> <span class="c"># needs &quot;1&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">db</span><span class="o">.</span><span class="n">select_one</span><span class="p">([</span><span class="n">WebPage</span><span class="p">])</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="rays.Database.select_all">
+<tt class="descname">select_all</tt><big>(</big><em>tables</em>, <em>select='SELECT %(all)s FROM %(tables)s'</em>, <em>cond='1'</em>, <em>values=None</em><big>)</big><a class="headerlink" href="#rays.Database.select_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Executes a select query and mapping it <tt class="docutils literal"><span class="pre">tables</span></tt>.</p>
+<dl class="docutils">
+<dt>Example::</dt>
+<dd><div class="first last highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">select</span><span class="p">([</span><span class="n">WebPage</span><span class="p">,</span> <span class="n">WebSite</span><span class="p">],</span> <span class="n">cond</span><span class="o">=</span><span class="s">&quot;WebPage.site_id=WebSite.id and WebPage.id=?&quot;</span><span class="p">,</span><span class="n">values</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">web_page</span><span class="p">,</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">web_site</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">db</span><span class="o">.</span><span class="n">select</span><span class="p">([</span><span class="n">WebPage</span><span class="p">],</span> <span class="n">cond</span><span class="o">=</span><span class="s">&quot;1 ORDER BY created_at DESC&quot;</span><span class="p">)</span> <span class="c"># needs &quot;1&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">db</span><span class="o">.</span><span class="n">select_one</span><span class="p">([</span><span class="n">WebPage</span><span class="p">])</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="rays.Database.shell">
+<tt class="descname">shell</tt><big>(</big><big>)</big><a class="headerlink" href="#rays.Database.shell" title="Permalink to this definition">¶</a></dt>
+<dd><p>Starts a interactive database shell.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rays.Database.transaction">
+<tt class="descname">transaction</tt><big>(</big><em>*args</em>, <em>**kwds</em><big>)</big><a class="headerlink" href="#rays.Database.transaction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a new transaction.</p>
+<p>This method can be used as context managers for a <tt class="docutils literal"><span class="pre">with</span></tt> statement</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">db</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">ext</span><span class="o">.</span><span class="n">database</span><span class="o">.</span><span class="n">create_new_session</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">db</span><span class="o">.</span><span class="n">transaction</span><span class="p">():</span>
+<span class="gp">... </span>  <span class="k">raise</span> <span class="ne">Exception</span><span class="p">()</span> <span class="c"># rollback</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="rays.Database.update">
+<tt class="descname">update</tt><big>(</big><em>obj</em><big>)</big><a class="headerlink" href="#rays.Database.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the table with <tt class="docutils literal"><span class="pre">obj</span></tt>.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="rays.DatabaseExtension">
+<em class="property">class </em><tt class="descclassname">rays.</tt><tt class="descname">DatabaseExtension</tt><big>(</big><em>app</em>, <em>connection</em>, <em>transaction='commit_on_success'</em><big>)</big><a class="headerlink" href="#rays.DatabaseExtension" title="Permalink to this definition">¶</a></dt>
+<dd><p>Database management extension.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Available configuration parameters:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><dl class="first last docutils">
+<dt>connection </dt>
+<dd><p class="first last">unicode, sqlite3 database file name.</p>
+</dd>
+<dt>transaction </dt>
+<dd><p class="first">unicode, transaction behavior.</p>
+<blockquote class="last">
+<div><ul class="simple">
+<li><tt class="docutils literal"><span class="pre">commit_on_success</span></tt> : When a request starts, rays starts a transaction. If the response is produced without problems, rays commits transactions. Otherwise, rays rolls back transactions.</li>
+<li><tt class="docutils literal"><span class="pre">commit_auto</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">programmatic</span></tt></li>
+</ul>
+</div></blockquote>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="rays.DatabaseExtension.create_new_session">
+<tt class="descname">create_new_session</tt><big>(</big><big>)</big><a class="headerlink" href="#rays.DatabaseExtension.create_new_session" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a Database object with new connection.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="rays.DatabaseSessionStore">
+<em class="property">class </em><tt class="descclassname">rays.</tt><tt class="descname">DatabaseSessionStore</tt><big>(</big><em>*a</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#rays.DatabaseSessionStore" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implements a database based <tt class="docutils literal"><span class="pre">SessionStoreBase</span></tt>.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="rays.DefaultAttrDict">
+<em class="property">class </em><tt class="descclassname">rays.</tt><tt class="descname">DefaultAttrDict</tt><big>(</big><em>dct=None</em>, <em>factory=None</em><big>)</big><a class="headerlink" href="#rays.DefaultAttrDict" title="Permalink to this definition">¶</a></dt>
+<dd><p>A defaultdict like object, whose items also be accessible through object attributes.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="rays.Extension">
+<em class="property">class </em><tt class="descclassname">rays.</tt><tt class="descname">Extension</tt><big>(</big><em>app</em>, <em>ext_name=None</em><big>)</big><a class="headerlink" href="#rays.Extension" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base class for extensions.</p>
+<p>rays includes an API for extension writers to add their own features to the application.</p>
+<dl class="classmethod">
+<dt id="rays.Extension.app_config">
+<em class="property">classmethod </em><tt class="descname">app_config</tt><big>(</big><em>app</em>, <em>dct</em><big>)</big><a class="headerlink" href="#rays.Extension.app_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method called when the extension is configured by calling the <tt class="docutils literal"><span class="pre">Application.config</span></tt> method.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="rays.ExtensionLoader">
+<em class="property">class </em><tt class="descclassname">rays.</tt><tt class="descname">ExtensionLoader</tt><big>(</big><em>app</em>, <em>ext_module</em><big>)</big><a class="headerlink" href="#rays.ExtensionLoader" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="rays.ExtensionLoader.load">
+<tt class="descname">load</tt><big>(</big><big>)</big><a class="headerlink" href="#rays.ExtensionLoader.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads all extensions found in the <tt class="docutils literal"><span class="pre">ext_module</span></tt>.</p>
+<p>To turn an extension off, prefix it&#8217;s module name with an underscore.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="rays.FileSessionStore">
+<em class="property">class </em><tt class="descclassname">rays.</tt><tt class="descname">FileSessionStore</tt><big>(</big><em>root_path</em>, <em>*a</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#rays.FileSessionStore" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implements a file system based <tt class="docutils literal"><span class="pre">SessionStoreBase</span></tt>.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="rays.Helper">
+<em class="property">class </em><tt class="descclassname">rays.</tt><tt class="descname">Helper</tt><a class="headerlink" href="#rays.Helper" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="rays.Helper.capture">
+<tt class="descname">capture</tt><big>(</big><em>*args</em>, <em>**kwds</em><big>)</big><a class="headerlink" href="#rays.Helper.capture" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stores a block of markup in <tt class="docutils literal"><span class="pre">name</span></tt>.</p>
+<p>example:</p>
+<div class="highlight-python"><pre>&lt;% with h.capture("header"): %&gt;
+  &lt;script type="text/javascript&gt;alert("hello!");&lt;/script&gt;
+  &lt;% %&gt;
+&lt;%=r header %&gt;</pre>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="rays.Helper.concat">
+<tt class="descname">concat</tt><big>(</big><em>value</em><big>)</big><a class="headerlink" href="#rays.Helper.concat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds <tt class="docutils literal"><span class="pre">value</span></tt> to the output buffer.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="rays.Helper.htmlquote">
+<em class="property">classmethod </em><tt class="descname">htmlquote</tt><big>(</big><em>*a</em><big>)</big><a class="headerlink" href="#rays.Helper.htmlquote" title="Permalink to this definition">¶</a></dt>
+<dd><p>Escapes HTML tag characters.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="rays.Hookable">
+<em class="property">class </em><tt class="descclassname">rays.</tt><tt class="descname">Hookable</tt><a class="headerlink" href="#rays.Hookable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hookable object support.</p>
+<dl class="method">
+<dt id="rays.Hookable.add_hook">
+<tt class="descname">add_hook</tt><big>(</big><em>hook_type</em>, <em>hook=None</em>, <em>pos=''</em>, <em>name=''</em><big>)</big><a class="headerlink" href="#rays.Hookable.add_hook" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a hook to the object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><dl class="first last docutils">
+<dt>pos</dt>
+<dd><p class="first">The hooks position in relation to other hooks. 
+<tt class="docutils literal"><span class="pre">pos</span></tt> can consist of a few different values</p>
+<blockquote class="last">
+<div><ul class="simple">
+<li>The special strings: <tt class="docutils literal"><span class="pre">&quot;first&quot;</span></tt>, <tt class="docutils literal"><span class="pre">&quot;last&quot;</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">&quot;before_&quot;</span></tt> followed by other extension name.(i.e. before_DatabaseExtension)</li>
+<li><tt class="docutils literal"><span class="pre">&quot;after_&quot;</span></tt> followed by other extension name.(i.e. after_DatabaseExtension)</li>
+</ul>
+</div></blockquote>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="rays.Hookable.get_hook_by_type_and_name">
+<tt class="descname">get_hook_by_type_and_name</tt><big>(</big><em>hook_type</em>, <em>name</em><big>)</big><a class="headerlink" href="#rays.Hookable.get_hook_by_type_and_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a named Hook object associated with <tt class="docutils literal"><span class="pre">hook_type</span></tt>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rays.Hookable.hook">
+<tt class="descname">hook</tt><big>(</big><em>hook_type=''</em>, <em>pos=''</em>, <em>name=''</em><big>)</big><a class="headerlink" href="#rays.Hookable.hook" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a hook to the object.</p>
+<p>This method is suitable to use as a decorator.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rays.Hookable.remove_hook">
+<tt class="descname">remove_hook</tt><big>(</big><em>hook_type</em>, <em>hook</em><big>)</big><a class="headerlink" href="#rays.Hookable.remove_hook" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove a hook.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rays.Hookable.reverse_run_hook">
+<tt class="descname">reverse_run_hook</tt><big>(</big><em>hook_type</em>, <em>args=</em><span class="optional">[</span><span class="optional">]</span>, <em>kw={}</em><big>)</big><a class="headerlink" href="#rays.Hookable.reverse_run_hook" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs hooks associated with <tt class="docutils literal"><span class="pre">hook_type</span></tt> in the reverse order.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rays.Hookable.run_hook">
+<tt class="descname">run_hook</tt><big>(</big><em>hook_type</em>, <em>args=</em><span class="optional">[</span><span class="optional">]</span>, <em>kw={}</em><big>)</big><a class="headerlink" href="#rays.Hookable.run_hook" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs hooks associated with <tt class="docutils literal"><span class="pre">hook_type</span></tt>.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="rays.HookableClass">
+<em class="property">class </em><tt class="descclassname">rays.</tt><tt class="descname">HookableClass</tt><a class="headerlink" href="#rays.HookableClass" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hookable class support.</p>
+<dl class="classmethod">
+<dt id="rays.HookableClass.add_hook">
+<em class="property">classmethod </em><tt class="descname">add_hook</tt><big>(</big><em>hook_type</em>, <em>hook=None</em>, <em>pos=''</em>, <em>name=''</em><big>)</big><a class="headerlink" href="#rays.HookableClass.add_hook" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a hook to the object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><dl class="first last docutils">
+<dt>pos</dt>
+<dd><p class="first">The hooks position in relation to other hooks. 
+<tt class="docutils literal"><span class="pre">pos</span></tt> can consist of a few different values</p>
+<blockquote class="last">
+<div><ul class="simple">
+<li>The special strings: <tt class="docutils literal"><span class="pre">&quot;first&quot;</span></tt>, <tt class="docutils literal"><span class="pre">&quot;last&quot;</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">&quot;before_&quot;</span></tt> followed by other extension name.(i.e. before_DatabaseExtension)</li>
+<li><tt class="docutils literal"><span class="pre">&quot;after_&quot;</span></tt> followed by other extension name.(i.e. after_DatabaseExtension)</li>
+</ul>
+</div></blockquote>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="rays.HookableClass.get_hook_by_type_and_name">
+<em class="property">classmethod </em><tt class="descname">get_hook_by_type_and_name</tt><big>(</big><em>hook_type</em>, <em>name</em><big>)</big><a class="headerlink" href="#rays.HookableClass.get_hook_by_type_and_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a named Hook object associated with <tt class="docutils literal"><span class="pre">hook_type</span></tt>.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="rays.HookableClass.hook">
+<em class="property">classmethod </em><tt class="descname">hook</tt><big>(</big><em>hook_type=''</em>, <em>pos=''</em>, <em>name=''</em><big>)</big><a class="headerlink" href="#rays.HookableClass.hook" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a hook to the object.</p>
+<p>This method is suitable to use as a decorator.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="rays.HookableClass.remove_hook">
+<em class="property">classmethod </em><tt class="descname">remove_hook</tt><big>(</big><em>hook_type</em>, <em>hook</em><big>)</big><a class="headerlink" href="#rays.HookableClass.remove_hook" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove a hook.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="rays.HookableClass.reverse_run_hook">
+<em class="property">classmethod </em><tt class="descname">reverse_run_hook</tt><big>(</big><em>hook_type</em>, <em>args=</em><span class="optional">[</span><span class="optional">]</span>, <em>kw={}</em><big>)</big><a class="headerlink" href="#rays.HookableClass.reverse_run_hook" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs hooks associated with <tt class="docutils literal"><span class="pre">hook_type</span></tt> in the reverse order.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="rays.HookableClass.run_hook">
+<em class="property">classmethod </em><tt class="descname">run_hook</tt><big>(</big><em>hook_type</em>, <em>args=</em><span class="optional">[</span><span class="optional">]</span>, <em>kw={}</em><big>)</big><a class="headerlink" href="#rays.HookableClass.run_hook" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs hooks associated with <tt class="docutils literal"><span class="pre">hook_type</span></tt>.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="rays.Model">
+<em class="property">class </em><tt class="descclassname">rays.</tt><tt class="descname">Model</tt><big>(</big><em>**kw</em><big>)</big><a class="headerlink" href="#rays.Model" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Class hooks:</th><td class="field-body"><dl class="first last docutils">
+<dt>before_create(obj)</dt>
+<dd><p class="first last">called before <tt class="docutils literal"><span class="pre">insert</span></tt></p>
+</dd>
+<dt>after_create(obj)</dt>
+<dd><p class="first last">called after <tt class="docutils literal"><span class="pre">insert</span></tt></p>
+</dd>
+<dt>before_save(obj)</dt>
+<dd><p class="first last">called before <tt class="docutils literal"><span class="pre">insert</span></tt> and <tt class="docutils literal"><span class="pre">update</span></tt></p>
+</dd>
+<dt>after_save(obj)</dt>
+<dd><p class="first last">called after <tt class="docutils literal"><span class="pre">insert</span></tt> and <tt class="docutils literal"><span class="pre">update</span></tt></p>
+</dd>
+<dt>before_delete(obj)</dt>
+<dd><p class="first last">called before <tt class="docutils literal"><span class="pre">delete</span></tt></p>
+</dd>
+<dt>after_delete(obj)</dt>
+<dd><p class="first last">called after <tt class="docutils literal"><span class="pre">delete</span></tt></p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="rays.PropertyCachable">
+<tt class="descclassname">rays.</tt><tt class="descname">PropertyCachable</tt><a class="headerlink" href="#rays.PropertyCachable" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">PropertyCachableType</span></tt></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="rays.Renderer">
+<em class="property">class </em><tt class="descclassname">rays.</tt><tt class="descname">Renderer</tt><big>(</big><em>template_dir</em>, <em>cache_dir</em>, <em>template_globals=None</em>, <em>filter=None</em>, <em>encoding='utf8'</em><big>)</big><a class="headerlink" href="#rays.Renderer" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="rays.Renderer.render">
+<tt class="descname">render</tt><big>(</big><em>name</em>, <em>vars=None</em>, <em>encoding=None</em><big>)</big><a class="headerlink" href="#rays.Renderer.render" title="Permalink to this definition">¶</a></dt>
+<dd><p>Renders the template file.</p>
+<p><tt class="docutils literal"><span class="pre">Renderer.index(vars,</span> <span class="pre">encoding)</span></tt> is same as <tt class="docutils literal"><span class="pre">Renderer.render_file(&quot;index&quot;,</span> <span class="pre">vars,</span> <span class="pre">encoding).</span></tt></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rays.Renderer.render_file">
+<tt class="descname">render_file</tt><big>(</big><em>name</em>, <em>vars=None</em>, <em>encoding=None</em><big>)</big><a class="headerlink" href="#rays.Renderer.render_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Renders the template file.</p>
+<p><tt class="docutils literal"><span class="pre">Renderer.index(vars,</span> <span class="pre">encoding)</span></tt> is same as <tt class="docutils literal"><span class="pre">Renderer.render_file(&quot;index&quot;,</span> <span class="pre">vars,</span> <span class="pre">encoding).</span></tt></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rays.Renderer.render_string">
+<tt class="descname">render_string</tt><big>(</big><em>template</em>, <em>vars=None</em><big>)</big><a class="headerlink" href="#rays.Renderer.render_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Renders the template string.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="rays.Request">
+<em class="property">class </em><tt class="descclassname">rays.</tt><tt class="descname">Request</tt><big>(</big><em>env</em><big>)</big><a class="headerlink" href="#rays.Request" title="Permalink to this definition">¶</a></dt>
+<dd><p>Request.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Attributes :</th><td class="field-body"><dl class="first last docutils">
+<dt>params     </dt>
+<dd><p class="first last">List of parameters as part of the requested URL</p>
+</dd>
+<dt>action     </dt>
+<dd><p class="first last">Requested rays.Action object.</p>
+</dd>
+<dt>content_length</dt>
+<dd><p class="first last">Returns the content length of the request as an integer.</p>
+</dd>
+<dt>websocket</dt>
+<dd><p class="first last">Returns a websocket object.</p>
+</dd>
+<dt>format</dt>
+<dd><p class="first last">Returns the mime type for the request.    The mime type is driven by the requested path extension.</p>
+</dd>
+<dt>referer</dt>
+<dd><p class="first last">Returns the referer.</p>
+</dd>
+<dt>cookies</dt>
+<dd><p class="first last">Returns a dictionary object with the cookies.</p>
+</dd>
+<dt>accept</dt>
+<dd><p class="first last">Returns an Accept object associated with the &#8216;Accept&#8217; header.</p>
+</dd>
+<dt>host</dt>
+<dd><p class="first last">Returns the host.</p>
+</dd>
+<dt>is_xml_http_request</dt>
+<dd><p class="first last">Returns true if the &#8216;X-Requested-With&#8217; header contains &#8216;XMLHttpRequest&#8217;</p>
+</dd>
+<dt>accept_language</dt>
+<dd><p class="first last">Returns an Accept object associated with the &#8216;Accept-Charset&#8217; header.</p>
+</dd>
+<dt>port</dt>
+<dd><p class="first last">Returns the port as an integer.</p>
+</dd>
+<dt>accept_encoding</dt>
+<dd><p class="first last">Returns an Accept object associated with the &#8216;Accept-Encoding&#8217; header.</p>
+</dd>
+<dt>remote_addr</dt>
+<dd><p class="first last">Returns the remote address.</p>
+</dd>
+<dt>http_version</dt>
+<dd><p class="first last">Returns a http version, such as 1.0(float)</p>
+</dd>
+<dt>accept_charset</dt>
+<dd><p class="first last">Returns an Accept object associated with the &#8216;Accept-Charset&#8217; header.</p>
+</dd>
+<dt>host_with_port</dt>
+<dd><p class="first last">Returns a string such as &#8220;example.com:8080&#8221;.</p>
+</dd>
+<dt>is_ssl</dt>
+<dd><p class="first last">Returns whether the request is under SSL.</p>
+</dd>
+<dt>input</dt>
+<dd><p class="first last">Returns a dictionary object with the GET and POST parameters.</p>
+</dd>
+<dt>ua</dt>
+<dd><p class="first last">Returns the HTT_USER_AGENT</p>
+</dd>
+<dt>method</dt>
+<dd><p class="first last">Returns the HTTP REQUEST_METHOD as a lowercase string.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="rays.Request.env">
+<tt class="descname">env</tt><a class="headerlink" href="#rays.Request.env" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a dictionary object with the environment variables.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rays.Request.get_header">
+<tt class="descname">get_header</tt><big>(</big><em>name</em>, <em>default=None</em><big>)</big><a class="headerlink" href="#rays.Request.get_header" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the value for the named header.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="rays.Request.path">
+<tt class="descname">path</tt><a class="headerlink" href="#rays.Request.path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a path, such as /show/1</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="rays.Response">
+<em class="property">class </em><tt class="descclassname">rays.</tt><tt class="descname">Response</tt><big>(</big><em>start_response</em><big>)</big><a class="headerlink" href="#rays.Response" title="Permalink to this definition">¶</a></dt>
+<dd><p>Response.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Attributes :</th><td class="field-body"><dl class="first last docutils">
+<dt>status_code</dt>
+<dd><p class="first last">HTTP status code</p>
+</dd>
+<dt>charset</dt>
+<dd><p class="first last">Charcter set name for the response, such as &#8220;UTF-8&#8221;</p>
+</dd>
+<dt>content</dt>
+<dd><p class="first last">Content for the response as an IO or string object</p>
+</dd>
+<dt>exception</dt>
+<dd><p class="first last">Exception that was raised while this request</p>
+</dd>
+<dt>is_headers_written</dt>
+<dd><p class="first last">True if headers have already been sent, otherwise False</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="rays.Response.content_type">
+<tt class="descname">content_type</tt><a class="headerlink" href="#rays.Response.content_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Content-type for the response</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rays.Response.del_header">
+<tt class="descname">del_header</tt><big>(</big><em>name</em><big>)</big><a class="headerlink" href="#rays.Response.del_header" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes the <tt class="docutils literal"><span class="pre">name</span></tt> headers.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rays.Response.get_header">
+<tt class="descname">get_header</tt><big>(</big><em>name</em><big>)</big><a class="headerlink" href="#rays.Response.get_header" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the value for the named header.</p>
+<p>Returns a list if exists multiple headers of the same <tt class="docutils literal"><span class="pre">name</span></tt>, otherwise a string.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="rays.Response.headers">
+<tt class="descname">headers</tt><a class="headerlink" href="#rays.Response.headers" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of tuples, such as [(&#8220;Content-Type&#8221;, &#8220;text/html&#8221;)]</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="rays.Response.is_abort">
+<tt class="descname">is_abort</tt><a class="headerlink" href="#rays.Response.is_abort" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns whether or not this response indicates a unsuccessful.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="rays.Response.is_error">
+<tt class="descname">is_error</tt><a class="headerlink" href="#rays.Response.is_error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns whether or not this response indicates a internal error.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="rays.Response.is_success">
+<tt class="descname">is_success</tt><a class="headerlink" href="#rays.Response.is_success" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns whether or not this response indicates a successful.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rays.Response.send_file">
+<tt class="descname">send_file</tt><big>(</big><em>filepath</em>, <em>guess_mimetype=True</em>, <em>mimetype='text/plain'</em>, <em>last_modified=None</em><big>)</big><a class="headerlink" href="#rays.Response.send_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sends file data to a browser immediately.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rays.Response.set_cookie">
+<tt class="descname">set_cookie</tt><big>(</big><em>name</em>, <em>value</em>, <em>expires=''</em>, <em>domain=None</em>, <em>secure=False</em>, <em>path='/'</em>, <em>**kargs</em><big>)</big><a class="headerlink" href="#rays.Response.set_cookie" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets a cookie.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><dl class="first last docutils">
+<dt>expires</dt>
+<dd><p class="first last">Floating point number expressed in seconds since now</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="rays.Response.set_header">
+<tt class="descname">set_header</tt><big>(</big><em>name</em>, <em>value</em>, <em>unique=True</em><big>)</big><a class="headerlink" href="#rays.Response.set_header" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds the header <tt class="docutils literal"><span class="pre">name</span></tt>: <tt class="docutils literal"><span class="pre">value</span></tt> for the response.</p>
+<p>if <tt class="docutils literal"><span class="pre">unique</span></tt> is True, <tt class="docutils literal"><span class="pre">name</span></tt> header will be overwritten by this value.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rays.Response.start_response">
+<tt class="descname">start_response</tt><big>(</big><big>)</big><a class="headerlink" href="#rays.Response.start_response" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sends HTTP headers to the client.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="rays.Response.status">
+<tt class="descname">status</tt><a class="headerlink" href="#rays.Response.status" title="Permalink to this definition">¶</a></dt>
+<dd><p>Status string for the response, such as &#8220;200 OK&#8221;</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="rays.Session">
+<em class="property">class </em><tt class="descclassname">rays.</tt><tt class="descname">Session</tt><big>(</big><em>session_id</em><big>)</big><a class="headerlink" href="#rays.Session" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="rays.Session.kill">
+<tt class="descname">kill</tt><big>(</big><big>)</big><a class="headerlink" href="#rays.Session.kill" title="Permalink to this definition">¶</a></dt>
+<dd><p>Kills the session.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="rays.SessionExtension">
+<em class="property">class </em><tt class="descclassname">rays.</tt><tt class="descname">SessionExtension</tt><big>(</big><em>app</em>, <em>cookie_name='session_id'</em>, <em>cookie_expires=''</em>, <em>cookie_domain=None</em>, <em>cookie_secure=False</em>, <em>cookie_path=''</em>, <em>store=None</em><big>)</big><a class="headerlink" href="#rays.SessionExtension" title="Permalink to this definition">¶</a></dt>
+<dd><p>Session management extension.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Available configuration parameters:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><ul class="first last simple">
+<li>store : unicode, default <tt class="docutils literal"><span class="pre">&quot;File&quot;</span></tt></li>
+<li>expires: integer expressed in seconds since now, default <tt class="docutils literal"><span class="pre">60*60*24</span></tt></li>
+<li>secret: unicode, <strong>required</strong></li>
+<li>cookie_name: unicode, default <tt class="docutils literal"><span class="pre">&quot;session_id&quot;</span></tt></li>
+<li>cookie_domain: unicode</li>
+<li>cookie_secure: boolean</li>
+<li>cookie_path:  unicode</li>
+<li>cookie_expires: integer expressed in seconds since now</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="rays.SessionStoreBase">
+<em class="property">class </em><tt class="descclassname">rays.</tt><tt class="descname">SessionStoreBase</tt><big>(</big><em>app</em>, <em>secret=None</em>, <em>expires=86400</em><big>)</big><a class="headerlink" href="#rays.SessionStoreBase" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="rays.SessionStoreBase.cleanup">
+<tt class="descname">cleanup</tt><big>(</big><big>)</big><a class="headerlink" href="#rays.SessionStoreBase.cleanup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes expired session data.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rays.SessionStoreBase.count">
+<tt class="descname">count</tt><big>(</big><big>)</big><a class="headerlink" href="#rays.SessionStoreBase.count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the number of sessions</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rays.SessionStoreBase.create">
+<tt class="descname">create</tt><big>(</big><big>)</big><a class="headerlink" href="#rays.SessionStoreBase.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates and returns a new <tt class="docutils literal"><span class="pre">Session</span></tt> object with a new session id.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rays.SessionStoreBase.decode">
+<tt class="descname">decode</tt><big>(</big><em>data</em>, <em>tamper_proof=False</em><big>)</big><a class="headerlink" href="#rays.SessionStoreBase.decode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a python representation of the <tt class="docutils literal"><span class="pre">data</span></tt>.</p>
+<p>If the <tt class="docutils literal"><span class="pre">tamper_proof</span></tt> is true, validates the HMAC signature in the <tt class="docutils literal"><span class="pre">data</span></tt>.
+If the <tt class="docutils literal"><span class="pre">data</span></tt> is tampered, returns None.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rays.SessionStoreBase.delete">
+<tt class="descname">delete</tt><big>(</big><em>session_id</em><big>)</big><a class="headerlink" href="#rays.SessionStoreBase.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes session data indicated by the <tt class="docutils literal"><span class="pre">session_id</span></tt>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rays.SessionStoreBase.encode">
+<tt class="descname">encode</tt><big>(</big><em>obj</em>, <em>tamper_proof=False</em><big>)</big><a class="headerlink" href="#rays.SessionStoreBase.encode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a string representation of the <tt class="docutils literal"><span class="pre">obj</span></tt>.</p>
+<p>If the <tt class="docutils literal"><span class="pre">tamper_proof</span></tt> is true, the string holds a HMAC signature of the random value.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rays.SessionStoreBase.exists">
+<tt class="descname">exists</tt><big>(</big><em>session_id</em><big>)</big><a class="headerlink" href="#rays.SessionStoreBase.exists" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True if <tt class="docutils literal"><span class="pre">session_id</span></tt> is exists.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rays.SessionStoreBase.generate_session_id">
+<tt class="descname">generate_session_id</tt><big>(</big><big>)</big><a class="headerlink" href="#rays.SessionStoreBase.generate_session_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a session id.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rays.SessionStoreBase.load">
+<tt class="descname">load</tt><big>(</big><em>tamper_proof_session_id</em><big>)</big><a class="headerlink" href="#rays.SessionStoreBase.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads a <tt class="docutils literal"><span class="pre">Session</span></tt> object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rays.SessionStoreBase.new">
+<tt class="descname">new</tt><big>(</big><big>)</big><a class="headerlink" href="#rays.SessionStoreBase.new" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a new <tt class="docutils literal"><span class="pre">Session</span></tt> object with empty session id.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rays.SessionStoreBase.save">
+<tt class="descname">save</tt><big>(</big><em>session</em><big>)</big><a class="headerlink" href="#rays.SessionStoreBase.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves the <tt class="docutils literal"><span class="pre">session</span></tt>.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="rays.StaticFileExtension">
+<em class="property">class </em><tt class="descclassname">rays.</tt><tt class="descname">StaticFileExtension</tt><big>(</big><em>app</em>, <em>url</em>, <em>path</em>, <em>cache=31536000</em><big>)</big><a class="headerlink" href="#rays.StaticFileExtension" title="Permalink to this definition">¶</a></dt>
+<dd><p>Static file serving extension.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Available configuration parameters:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><ul class="first last">
+<li><p class="first">url : unicode, such as &#8220;statics/&#8221;</p>
+</li>
+<li><p class="first">path : unicode, such as &#8220;/home/www/app/statics&#8221;</p>
+</li>
+<li><dl class="first docutils">
+<dt>cache <span class="classifier-delimiter">:</span> <span class="classifier">Integer, a cache expiry in secounds. default: 86400*365(a year)</span></dt>
+<dd><p class="first last">Does not cache if the <tt class="docutils literal"><span class="pre">chache</span></tt> is negative.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="rays.cached_property">
+<tt class="descclassname">rays.</tt><tt class="descname">cached_property</tt><big>(</big><em>f</em><big>)</big><a class="headerlink" href="#rays.cached_property" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="rays.escape_html">
+<tt class="descclassname">rays.</tt><tt class="descname">escape_html</tt><big>(</big><em>s</em><big>)</big><a class="headerlink" href="#rays.escape_html" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="rays.eval_thunk">
+<tt class="descclassname">rays.</tt><tt class="descname">eval_thunk</tt><big>(</big><em>maybe_thunk</em><big>)</big><a class="headerlink" href="#rays.eval_thunk" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="rays.guess_decode">
+<tt class="descclassname">rays.</tt><tt class="descname">guess_decode</tt><big>(</big><em>q, lst=['utf_8', 'euc_jp', 'cp932', 'shift_jis']</em><big>)</big><a class="headerlink" href="#rays.guess_decode" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="rays.parse_http_date_string">
+<tt class="descclassname">rays.</tt><tt class="descname">parse_http_date_string</tt><big>(</big><em>string</em><big>)</big><a class="headerlink" href="#rays.parse_http_date_string" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="rays.return_response">
+<tt class="descclassname">rays.</tt><tt class="descname">return_response</tt><big>(</big><em>f</em><big>)</big><a class="headerlink" href="#rays.return_response" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sends a response to a browser immediately.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="rays.tls_property">
+<tt class="descclassname">rays.</tt><tt class="descname">tls_property</tt><big>(</big><em>name</em>, <em>doc=u''</em><big>)</big><a class="headerlink" href="#rays.tls_property" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="rays.to_http_date_string">
+<tt class="descclassname">rays.</tt><tt class="descname">to_http_date_string</tt><big>(</big><em>date</em><big>)</big><a class="headerlink" href="#rays.to_http_date_string" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="rays.to_snake_case">
+<tt class="descclassname">rays.</tt><tt class="descname">to_snake_case</tt><big>(</big><em>s, pat=[&lt;_sre.SRE_Pattern object at 0xac68da0&gt;]</em><big>)</big><a class="headerlink" href="#rays.to_snake_case" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="rays.unescape_html">
+<tt class="descclassname">rays.</tt><tt class="descname">unescape_html</tt><big>(</big><em>s</em><big>)</big><a class="headerlink" href="#rays.unescape_html" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="rays.unquote_guess_decode">
+<tt class="descclassname">rays.</tt><tt class="descname">unquote_guess_decode</tt><big>(</big><em>q</em><big>)</big><a class="headerlink" href="#rays.unquote_guess_decode" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">rays - A &#8220;LESS PAIN&#8221; lightweight WSGI compatible web framework</a><ul>
+<li><a class="reference internal" href="#licence-mit">Licence (MIT)</a></li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/rayphe.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="index.html">rays 0.4.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2009-2012, Yusuke Inuzuka.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

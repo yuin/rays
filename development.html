@@ -1,0 +1,236 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Development &mdash; rays 0.4.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.4.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="rays 0.4.0 documentation" href="index.html" />
+    <link rel="next" title="Changes" href="changes.html" />
+    <link rel="prev" title="Overview" href="overview.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="changes.html" title="Changes"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="overview.html" title="Overview"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">rays 0.4.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="development">
+<h1>Development<a class="headerlink" href="#development" title="Permalink to this headline">¶</a></h1>
+<p>This document describes how to develop the rays itself.
+rays uses the following libraries for development.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">distribute:</th><td class="field-body">Distribute is a fork of the Setuptools project.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">virtualenv:</th><td class="field-body">virtualenv is a tool to create isolated Python environments.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">tox:</th><td class="field-body">Tox is a generic virtualenv management and test command line tool.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">py.test:</th><td class="field-body">py.test provides simple powerful testing with Python.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">WebTest:</th><td class="field-body">webtest is a Helper to test WSGI applications.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Sphinx:</th><td class="field-body">Sphinx is a tool that makes it easy to create intelligent and beautiful documentation.</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="get-resources">
+<h2>Get resources<a class="headerlink" href="#get-resources" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><pre>cd yourworkspace
+git clone git@github.com:yourname/rays.git</pre>
+</div>
+</div>
+<div class="section" id="install-libraries">
+<h2>Install libraries<a class="headerlink" href="#install-libraries" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><pre>easy_install distribute
+easy_install vitrualenv
+easy_install tox</pre>
+</div>
+</div>
+<div class="section" id="create-your-own-test-environment">
+<h2>Create your own test environment<a class="headerlink" href="#create-your-own-test-environment" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><pre>cd rays
+cp tox.ini.sample tox.ini
+vi tox.ini
+(make some configurations...)
+tox</pre>
+</div>
+<p>Now, you have isolated environments including all dependencies.
+To activate this environment, on OS X and Linux, do the following commands:</p>
+<div class="highlight-python"><pre>$ . .tox/py27/bin/activate</pre>
+</div>
+<p>You can also active python3 environments, do the following commands:</p>
+<div class="highlight-python"><pre>$ . .tox/py32/bin/activate</pre>
+</div>
+<p>On Windows, do the following command:</p>
+<div class="highlight-python"><pre>$ .\.tox\py27\scripts\activate.bat</pre>
+</div>
+</div>
+<div class="section" id="run-tests">
+<h2>Run tests<a class="headerlink" href="#run-tests" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><pre>cd rays
+tox</pre>
+</div>
+<p>You should see test results and test coverage results.</p>
+</div>
+<div class="section" id="write-documents">
+<h2>Write documents<a class="headerlink" href="#write-documents" title="Permalink to this headline">¶</a></h2>
+<p>Document source files are written using reStructuredText. These sources are converted to HTML files using the sphinx.</p>
+<p>rays project has 2 branches:</p>
+<ol class="arabic simple">
+<li>gh-pages: Generated HTML files.</li>
+<li>master  : Any other files(including document source files).</li>
+</ol>
+<p>Document source files are stored under the <tt class="docutils literal"><span class="pre">master</span></tt> branches:</p>
+<div class="highlight-python"><pre>master +
+       - src
+       - setup.py
+       - (other files and directories)
+       - docs
+           +
+           - sources &lt;- document source files</pre>
+</div>
+<p><tt class="docutils literal"><span class="pre">master</span></tt> branch contains the <tt class="docutils literal"><span class="pre">gh-pages</span></tt> as a subdirectory.(git submodules):</p>
+<div class="highlight-python"><pre>master +
+       - setup.py
+       - src
+       - (other files and directories)
+       - docs +
+              - sources &lt;- document source files
+              - build +
+                      - html &lt;- link to the gh-pages branch</pre>
+</div>
+<p>Pulling down the <tt class="docutils literal"><span class="pre">gh-pages</span></tt> as a submodule is the following command:</p>
+<div class="highlight-python"><pre>python setup.py doc_init_submodule</pre>
+</div>
+<p>Now ready to generate HTML files.To generate HTML files, do the following command:</p>
+<div class="highlight-python"><pre>python setup.py doc_generate</pre>
+</div>
+<div class="section" id="commit-and-push-the-documents">
+<h3>Commit and push the documents<a class="headerlink" href="#commit-and-push-the-documents" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python"><pre>cd docs/build/html
+git commit -am "update docs"
+git push origin gh-pages
+cd ROOT
+git commit -am "update gh-pages submodule"
+git push origin master</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Development</a><ul>
+<li><a class="reference internal" href="#get-resources">Get resources</a></li>
+<li><a class="reference internal" href="#install-libraries">Install libraries</a></li>
+<li><a class="reference internal" href="#create-your-own-test-environment">Create your own test environment</a></li>
+<li><a class="reference internal" href="#run-tests">Run tests</a></li>
+<li><a class="reference internal" href="#write-documents">Write documents</a><ul>
+<li><a class="reference internal" href="#commit-and-push-the-documents">Commit and push the documents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="overview.html"
+                        title="previous chapter">Overview</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="changes.html"
+                        title="next chapter">Changes</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/development.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="changes.html" title="Changes"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="overview.html" title="Overview"
+             >previous</a> |</li>
+        <li><a href="index.html">rays 0.4.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2009-2012, Yusuke Inuzuka.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,582 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Overview &mdash; rays 0.4.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.4.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="rays 0.4.0 documentation" href="index.html" />
+    <link rel="next" title="Development" href="development.html" />
+    <link rel="prev" title="Welcome to rays’s documentation!" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="development.html" title="Development"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to rays’s documentation!"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">rays 0.4.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="overview">
+<h1>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li>rays is a WSGI compatible web framework designed for small web applications.</li>
+<li>rays supports both python2.7 and python3.2.</li>
+<li>rays handles multibyte-charcters correctly(It is important for me, So I&#8217;m a Japanese).</li>
+</ul>
+<div class="section" id="features">
+<h2>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h2>
+<ul>
+<li><dl class="first docutils">
+<dt>Routings: Simple, but powerful.</dt>
+<dd><ul class="first last">
+<li><p class="first">Routes are defined by regular expressions and type constructors:</p>
+<div class="highlight-python"><pre>@app.get("member/(int:\d+)")
+def show_member(member_id):
+  # ...</pre>
+</div>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">app.url</span></tt> has easy reference to routes:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">app</span><span class="o">.</span><span class="n">url</span><span class="o">.</span><span class="n">show_member</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="c">#=&gt; &quot;http://somehost/member/1&quot;</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Filters and Hooks: Writing DRY code.</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt>Hooks will be called back at following hook points.</dt>
+<dd><ul class="first last simple">
+<li>before_initialize</li>
+<li>after_initialize</li>
+<li>before_call</li>
+<li>before_dispatch</li>
+<li>before_action</li>
+<li>before_start_response</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p class="first">Hooks example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="nd">@app.hook</span><span class="p">(</span><span class="s">&quot;before_start_response&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">status_log_hook</span><span class="p">(</span><span class="o">*</span><span class="n">a</span><span class="p">):</span>
+  <span class="k">if</span> <span class="n">app</span><span class="o">.</span><span class="n">res</span><span class="o">.</span><span class="n">is_success</span><span class="p">:</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;success&quot;</span><span class="p">)</span>
+  <span class="k">elif</span> <span class="n">app</span><span class="o">.</span><span class="n">res</span><span class="o">.</span><span class="n">is_abort</span><span class="p">:</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s">&quot;abort&quot;</span><span class="p">)</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&quot;error:</span><span class="si">%s</span><span class="s">&quot;</span><span class="o">%</span><span class="nb">unicode</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">res</span><span class="o">.</span><span class="n">exception</span><span class="p">))</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Filters enable actions to run pre- and post-processing code:</p>
+<div class="highlight-python"><pre>def filter(*args):
+  # pre-processing
+  yield
+  # post-processing
+
+with app.filter(filter):
+  @app.get("member/(int:\d+)")
+  def show_member(member_id):
+    # ...</pre>
+</div>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Templates: Fast and flexible.</dt>
+<dd><ul class="first last">
+<li><p class="first">To render <tt class="docutils literal"><span class="pre">index.html</span></tt>, <tt class="docutils literal"><span class="pre">app.renderer.index(vars)</span></tt>.</p>
+</li>
+<li><dl class="first docutils">
+<dt>Strings surrounded by &#8220;&lt;%&#8221; and &#8220;%&gt;&#8221; will be interpreted as a python code.</dt>
+<dd><ul class="first last simple">
+<li><tt class="docutils literal"><span class="pre">&lt;%</span> <span class="pre">a</span> <span class="pre">=</span> <span class="pre">10</span> <span class="pre">%&gt;</span></tt></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">&lt;%=</span> <span class="pre">python</span> <span class="pre">code</span> <span class="pre">%&gt;</span></tt> will be replaced by the result of executing &#8220;python code&#8221;.</p>
+</li>
+<li><p class="first">Always applys a filter(i.e. <tt class="docutils literal"><span class="pre">cgi.escape</span></tt>). To turn it off, use <tt class="docutils literal"><span class="pre">&lt;%=r</span> <span class="pre">python</span> <span class="pre">code</span> <span class="pre">%&gt;</span></tt></p>
+</li>
+<li><p class="first">Many way to express blocks:</p>
+<div class="highlight-python"><pre>&lt;%- for i in xrange(10): -%&gt;
+  &lt;%= a %&gt;
+  &lt;% %&gt;
+
+&lt;%- for i in xrange(10) {: -%&gt;
+  &lt;%= a %&gt;
+&lt;% :} %&gt;
+
+&lt;%- for i in xrange(10) : -%&gt;
+  &lt;%= a %&gt;
+&lt;% end %&gt;</pre>
+</div>
+</li>
+<li><p class="first">Integrated useful template helpers:</p>
+<div class="highlight-python"><pre>&lt;% with h.capture("body"): %&gt;
+  foo
+  &lt;% %&gt;
+&lt;%= body %&gt;</pre>
+</div>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p class="first">ORMs: Simple wrapper for built-in sqlite3 module.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">result</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">select</span><span class="p">([</span><span class="n">Site</span><span class="p">,</span> <span class="n">Page</span><span class="p">],</span> <span class="n">cond</span><span class="o">=</span><span class="s">&quot;Page.site_id=Site.id and Page.id = ?&quot;</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="k">print</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">site</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">page</span><span class="p">)</span>
+<span class="n">app</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">page</span><span class="p">)</span>
+<span class="n">app</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">page</span><span class="p">)</span>
+<span class="n">app</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">page</span><span class="p">)</span>
+<span class="n">app</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">shell</span><span class="p">()</span> <span class="c"># interactive sqlite3 shell</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Sessions:</p>
+<div class="highlight-python"><pre>@app.get("signin")
+def signin():
+  if app.req.input["name"] == "bob" and app.req.input["password"] == "abracadabra":
+    app.session.kill()
+    app.session["authorized"] = True
+  else:
+    # ...</pre>
+</div>
+</li>
+<li><dl class="first docutils">
+<dt>WebSockets: Realtime messaging. ( <strong>requires gevent, greenlet, gevent-websocket</strong> )</dt>
+<dd><ul class="first last">
+<li><p class="first">You can find these source code in the <a class="reference external" href="https://github.com/yuin/rays/tree/master/src/samples/websocketchat">src/samples/websocketchat</a> directory.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="nd">@app.get</span><span class="p">(</span><span class="s">&quot;chat&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">chat</span><span class="p">():</span>
+  <span class="n">ws</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">req</span><span class="o">.</span><span class="n">websocket</span>
+  <span class="n">SOCKETS</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ws</span><span class="p">)</span>
+  <span class="n">app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;accepts: </span><span class="si">%s</span><span class="s">&quot;</span><span class="o">%</span><span class="nb">repr</span><span class="p">(</span><span class="n">ws</span><span class="o">.</span><span class="n">socket</span><span class="p">))</span>
+
+  <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="n">ws</span><span class="o">.</span><span class="n">receive</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">msg</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+      <span class="k">break</span>
+
+    <span class="n">error_sockets</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([])</span>
+    <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">SOCKETS</span><span class="p">:</span>
+      <span class="k">try</span><span class="p">:</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+      <span class="k">except</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">error_sockets</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">error_sockets</span><span class="p">:</span>
+      <span class="n">SOCKETS</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<div class="section" id="asynchronous-applications">
+<h3>Asynchronous applications<a class="headerlink" href="#asynchronous-applications" title="Permalink to this headline">¶</a></h3>
+<p>(TODO, See <a class="reference external" href="https://github.com/yuin/rays/tree/master/src/samples/asynchronous">src/samples/asynchronous</a>)</p>
+</div>
+</div>
+<div class="section" id="extensions">
+<h2>Extensions<a class="headerlink" href="#extensions" title="Permalink to this headline">¶</a></h2>
+<p>rays has an API that allows developers to add new features to their applications.
+This api is consistent with 2 classes: <tt class="docutils literal"><span class="pre">rays.ExtensionLoader</span></tt> and <tt class="docutils literal"><span class="pre">rays.Extension</span></tt>.</p>
+<p>To install your extensions, you need to configure the <tt class="docutils literal"><span class="pre">rays.ExtensionLoader</span></tt>.</p>
+<p>index.py:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">extensions</span>
+
+<span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">([</span>
+  <span class="p">(</span><span class="s">&quot;ExtensionLoader&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s">&quot;module&quot;</span><span class="p">:</span> <span class="n">extensions</span> <span class="p">}),</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+<p><tt class="docutils literal"><span class="pre">extensions</span></tt> is a module that has group of extensions.:</p>
+<div class="highlight-python"><pre>root
+|---- index.py
+|---- extensions
+           |---- __init__.py
+           |---- cache_extension.py
+           |---- template_extension.py
+           .
+           .
+           .</pre>
+</div>
+<div class="section" id="creating-your-extension">
+<h3>Creating your extension<a class="headerlink" href="#creating-your-extension" title="Permalink to this headline">¶</a></h3>
+<p>(TODO)</p>
+</div>
+</div>
+<div class="section" id="requirements">
+<h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Python 2.7</li>
+<li>Python 3.2</li>
+</ul>
+</div>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p><tt class="docutils literal"><span class="pre">easy_install</span> <span class="pre">rays</span></tt></p>
+<p>or</p>
+<p><tt class="docutils literal"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-e</span> <span class="pre">git://github.com/yuin/rays.git#egg=rays</span></tt></p>
+<p>or download a zip file from <tt class="docutils literal"><span class="pre">https://github.com/yuin/rays/zipball/master</span></tt> and</p>
+<div class="highlight-python"><pre>python setup.py install</pre>
+</div>
+</div>
+<div class="section" id="example">
+<h2>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
+<p>You can find these source code in the <a class="reference external" href="https://github.com/yuin/rays/tree/master/src/samples/blog">src/samples/blog</a> directory.</p>
+<p>index.py:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">rays</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">rays.compat</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">sys</span><span class="o">,</span> <span class="nn">os.path</span><span class="o">,</span> <span class="nn">math</span><span class="o">,</span> <span class="nn">contextlib</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">Application</span><span class="p">()</span>
+<span class="n">APP_DIR</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">__file__</span><span class="p">)</span>
+<span class="n">DB_FILE</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">APP_DIR</span><span class="p">,</span> <span class="s">&quot;test.db&quot;</span><span class="p">)</span>
+<span class="n">c</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">local</span><span class="p">()</span>
+
+<span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">([</span>
+  <span class="p">(</span><span class="s">&quot;debug&quot;</span><span class="p">,</span> <span class="bp">True</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">&quot;renderer&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s">&quot;template_dir&quot;</span><span class="p">:</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">APP_DIR</span><span class="p">,</span> <span class="s">&quot;templates&quot;</span><span class="p">),</span>
+                <span class="s">&quot;cache_dir&quot;</span><span class="p">:</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">APP_DIR</span><span class="p">,</span> <span class="s">&quot;templates/caches&quot;</span><span class="p">)}),</span>
+  <span class="p">(</span><span class="s">&quot;DatabaseExtension&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s">&quot;connection&quot;</span><span class="p">:</span><span class="n">DB_FILE</span><span class="p">,</span> <span class="s">&quot;transaction&quot;</span><span class="p">:</span><span class="s">&quot;commit_on_success&quot;</span><span class="p">}),</span>
+  <span class="p">(</span><span class="s">&quot;SessionExtension&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s">&quot;store&quot;</span><span class="p">:</span><span class="s">&quot;Database&quot;</span><span class="p">,</span> <span class="s">&quot;secret&quot;</span><span class="p">:</span><span class="s">&quot;asdfeE305Gs0lg&quot;</span><span class="p">,</span>
+               <span class="s">&quot;cookie_path&quot;</span><span class="p">:</span><span class="s">&quot;admin&quot;</span><span class="p">}),</span>
+  <span class="p">(</span><span class="s">&quot;StaticFileExtension&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s">&quot;url&quot;</span><span class="p">:</span><span class="s">&quot;statics/&quot;</span><span class="p">,</span> <span class="s">&quot;path&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">APP_DIR</span><span class="p">,</span> <span class="s">&quot;statics&quot;</span><span class="p">)}),</span>
+  <span class="p">(</span><span class="s">&quot;admin_name&quot;</span><span class="p">,</span> <span class="s">&quot;admin&quot;</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">&quot;admin_password&quot;</span><span class="p">,</span> <span class="s">&quot;password&quot;</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">&quot;blog_title&quot;</span><span class="p">,</span> <span class="s">&quot;My blog&quot;</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">&quot;entry_per_page&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+<span class="p">])</span>
+
+<span class="k">class</span> <span class="nc">BaseModel</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span> <span class="c"># {{{</span>
+  <span class="k">def</span> <span class="nf">class_init</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+    <span class="n">Model</span><span class="o">.</span><span class="n">class_init</span><span class="p">(</span><span class="n">cls</span><span class="p">)</span>
+
+    <span class="nd">@cls.hook</span><span class="p">(</span><span class="s">&quot;before_create&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">before_create</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">created_at</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+<span class="c"># }}}</span>
+
+<span class="k">class</span> <span class="nc">Entry</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span> <span class="c">#{{{</span>
+  <span class="n">table_name</span> <span class="o">=</span> <span class="s">&quot;entries&quot;</span>
+  <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;Title required.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">100</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;Title too long.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;Title too short.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">body</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;Body required.&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">result</span>
+<span class="c"># }}}</span>
+
+<span class="c"># filters {{{</span>
+<span class="k">def</span> <span class="nf">context_setup_filter</span><span class="p">(</span><span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">k</span><span class="p">):</span>
+  <span class="n">c</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">vars</span><span class="o">.</span><span class="n">blog_title</span>
+  <span class="n">c</span><span class="o">.</span><span class="n">errors</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="k">yield</span>
+
+<span class="k">def</span> <span class="nf">admin_filter</span><span class="p">(</span><span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">k</span><span class="p">):</span>
+  <span class="k">if</span> <span class="ow">not</span> <span class="n">app</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="s">&quot;signin&quot;</span><span class="p">]:</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">res</span><span class="o">.</span><span class="n">redirect</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">url</span><span class="o">.</span><span class="n">admin_signin</span><span class="p">())</span>
+  <span class="k">yield</span>
+
+<span class="k">def</span> <span class="nf">flash_filter</span><span class="p">(</span><span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">k</span><span class="p">):</span>
+  <span class="n">cond</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="s">&quot;signin&quot;</span><span class="p">]</span>
+  <span class="k">if</span> <span class="n">cond</span><span class="p">:</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="s">&quot;flash&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="s">&quot;flash&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="p">{}</span>
+    <span class="n">keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">iter_keys</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="s">&quot;flash&quot;</span><span class="p">]))</span>
+  <span class="k">yield</span>
+  <span class="k">if</span> <span class="n">cond</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span> <span class="k">del</span> <span class="n">app</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="s">&quot;flash&quot;</span><span class="p">][</span><span class="n">key</span><span class="p">]</span>
+<span class="c"># }}}</span>
+
+<span class="c"># helpers {{{</span>
+<span class="nd">@app.helper</span>
+<span class="nd">@contextlib.contextmanager</span>
+<span class="k">def</span> <span class="nf">main_block</span><span class="p">(</span><span class="n">helper</span><span class="p">):</span>
+  <span class="n">helper</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="s">&quot;&lt;div id=</span><span class="se">\&quot;</span><span class="s">main</span><span class="se">\&quot;</span><span class="s">&gt;&quot;</span><span class="p">)</span>
+  <span class="k">with</span> <span class="n">helper</span><span class="o">.</span><span class="n">capture</span><span class="p">(</span><span class="s">&quot;__main_block&quot;</span><span class="p">):</span>
+    <span class="k">yield</span>
+  <span class="n">helper</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">helper</span><span class="o">.</span><span class="n">captured</span><span class="p">(</span><span class="s">&quot;__main_block&quot;</span><span class="p">))</span>
+  <span class="n">helper</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="s">&quot;&lt;/div&gt;&quot;</span><span class="p">)</span>
+
+<span class="nd">@app.helper</span>
+<span class="k">def</span> <span class="nf">show_errors</span><span class="p">(</span><span class="n">helper</span><span class="p">,</span> <span class="n">errors</span><span class="p">):</span>
+  <span class="k">if</span> <span class="n">errors</span><span class="p">:</span>
+    <span class="n">helper</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="s">&quot;&lt;div class=</span><span class="se">\&quot;</span><span class="s">error</span><span class="se">\&quot;</span><span class="s">&gt;&lt;strong&gt;Error:&lt;/strong&gt;&lt;ul&gt;&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">error</span> <span class="ow">in</span> <span class="n">errors</span><span class="p">:</span>
+      <span class="n">helper</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="s">&quot;&lt;li&gt;&quot;</span><span class="o">+</span><span class="n">error</span><span class="o">+</span><span class="s">&quot;&lt;/li&gt;&quot;</span><span class="p">)</span>
+    <span class="n">helper</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="s">&quot;&lt;/ul&gt;&lt;/div&gt;&quot;</span><span class="p">)</span>
+
+<span class="nd">@app.helper</span>
+<span class="k">def</span> <span class="nf">show_message</span><span class="p">(</span><span class="n">helper</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+  <span class="k">if</span> <span class="n">message</span><span class="p">:</span>
+    <span class="n">helper</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="s">&quot;&lt;div class=</span><span class="se">\&quot;</span><span class="s">message</span><span class="se">\&quot;</span><span class="s">&gt;&quot;</span><span class="p">)</span>
+    <span class="n">helper</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+    <span class="n">helper</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="s">&quot;&lt;/div&gt;&quot;</span><span class="p">)</span>
+
+<span class="nd">@app.helper</span>
+<span class="k">def</span> <span class="nf">format_datetime</span><span class="p">(</span><span class="n">helper</span><span class="p">,</span> <span class="n">dt</span><span class="p">):</span>
+  <span class="k">return</span> <span class="n">dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s">&quot;%m.</span><span class="si">%d</span><span class="s">.%y/%I%p %Z&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+<span class="nd">@app.helper</span>
+<span class="k">def</span> <span class="nf">hatom_published</span><span class="p">(</span><span class="n">helper</span><span class="p">,</span> <span class="n">entry</span><span class="p">):</span>
+  <span class="k">return</span> <span class="s">&quot;&quot;&quot;&lt;abbr class=&quot;published&quot; title=&quot;</span><span class="si">%s</span><span class="s">&quot;&gt;</span><span class="si">%s</span><span class="s">&lt;/abbr&gt;&quot;&quot;&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">created_at</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(),</span> <span class="n">helper</span><span class="o">.</span><span class="n">format_datetime</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">created_at</span><span class="p">))</span>
+
+<span class="nd">@app.helper</span>
+<span class="k">def</span> <span class="nf">format_body</span><span class="p">(</span><span class="n">helper</span><span class="p">,</span> <span class="n">body</span><span class="p">):</span>
+  <span class="k">return</span> <span class="n">body</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="s">&quot;&lt;br /&gt;&quot;</span><span class="p">)</span>
+
+<span class="nd">@app.helper</span>
+<span class="k">def</span> <span class="nf">page_link</span><span class="p">(</span><span class="n">helper</span><span class="p">,</span> <span class="n">page</span><span class="p">):</span>
+  <span class="k">return</span> <span class="n">app</span><span class="o">.</span><span class="n">url</span><span class="o">.</span><span class="n">index</span><span class="p">()</span><span class="o">+</span><span class="s">&quot;?page=</span><span class="si">%d</span><span class="s">&quot;</span><span class="o">%</span><span class="n">page</span>
+
+<span class="nd">@app.helper</span>
+<span class="k">def</span> <span class="nf">pagination</span><span class="p">(</span><span class="n">helper</span><span class="p">,</span> <span class="n">count</span><span class="p">,</span> <span class="n">page</span><span class="p">):</span>
+  <span class="n">page</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">page</span><span class="p">)</span>
+  <span class="n">n</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">vars</span><span class="o">.</span><span class="n">entry_per_page</span>
+  <span class="n">tpl</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;&lt;ul id=</span><span class="se">\&quot;</span><span class="s">pagination</span><span class="se">\&quot;</span><span class="s">&gt;&quot;</span><span class="p">]</span>
+  <span class="n">append</span> <span class="o">=</span> <span class="n">tpl</span><span class="o">.</span><span class="n">append</span>
+  <span class="n">max_page</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">count</span><span class="o">/</span><span class="nb">float</span><span class="p">(</span><span class="n">n</span><span class="p">)))</span>
+  <span class="k">if</span> <span class="n">page</span> <span class="o">&gt;</span> <span class="n">max_page</span><span class="p">:</span> <span class="n">page</span><span class="o">=</span><span class="mi">1</span>
+  <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">page</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="nb">min</span><span class="p">(</span><span class="n">page</span><span class="o">+</span><span class="mi">4</span><span class="p">,</span> <span class="n">max_page</span><span class="p">)</span>
+  <span class="n">append</span><span class="p">(</span><span class="s">&quot;&lt;li class=</span><span class="se">\&quot;</span><span class="si">%s</span><span class="se">\&quot;</span><span class="s">&gt;</span><span class="si">%s</span><span class="s">&lt;/li&gt;&quot;</span><span class="o">%</span> \
+    <span class="p">((</span><span class="n">page</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="p">(</span><span class="s">&quot;previous-off&quot;</span><span class="p">,</span> <span class="s">&quot;&amp;laquo;Previous&quot;</span><span class="p">)</span> <span class="ow">or</span>\
+     <span class="p">(</span><span class="s">&quot;previous&quot;</span><span class="p">,</span> <span class="s">&quot;&lt;a href=</span><span class="se">\&quot;</span><span class="si">%s</span><span class="se">\&quot;</span><span class="s"> rel=</span><span class="se">\&quot;</span><span class="s">prev</span><span class="se">\&quot;</span><span class="s">&gt;&amp;laquo;Previous&lt;/a&gt;&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">helper</span><span class="o">.</span><span class="n">page_link</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">page</span><span class="o">-</span><span class="mi">1</span><span class="p">)))))</span>
+  <span class="k">if</span> <span class="n">start</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span> <span class="n">append</span><span class="p">(</span><span class="s">&quot;&lt;li&gt;&lt;a href=</span><span class="se">\&quot;</span><span class="si">%s</span><span class="se">\&quot;</span><span class="s">&gt;1&lt;/a&gt;&lt;/li&gt;&quot;</span><span class="o">%</span><span class="n">helper</span><span class="o">.</span><span class="n">page_link</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+  <span class="k">if</span> <span class="n">start</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>  <span class="n">append</span><span class="p">(</span><span class="s">&quot;&lt;li&gt;&amp;nbsp;&amp;nbsp;.......&amp;nbsp;&amp;nbsp;&lt;/li&gt;&quot;</span><span class="p">)</span>
+
+  <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">irange</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">page</span><span class="p">:</span>
+      <span class="n">append</span><span class="p">(</span><span class="s">&quot;&lt;li class=</span><span class="se">\&quot;</span><span class="s">active</span><span class="se">\&quot;</span><span class="s">&gt;</span><span class="si">%d</span><span class="s">&lt;/li&gt;&quot;</span><span class="o">%</span><span class="n">i</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">append</span><span class="p">(</span><span class="s">&quot;&lt;li&gt;&lt;a href=</span><span class="se">\&quot;</span><span class="si">%s</span><span class="se">\&quot;</span><span class="s">&gt;</span><span class="si">%d</span><span class="s">&lt;/a&gt;&lt;/li&gt;&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">helper</span><span class="o">.</span><span class="n">page_link</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">i</span><span class="p">),</span> <span class="n">i</span><span class="p">))</span>
+
+  <span class="k">if</span> <span class="n">end</span> <span class="o">&lt;</span> <span class="p">(</span><span class="n">max_page</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span> <span class="n">append</span><span class="p">(</span><span class="s">&quot;&lt;li&gt;&amp;nbsp;&amp;nbsp;......&amp;nbsp;&amp;nbsp;&lt;/li&gt;&quot;</span><span class="p">)</span>
+  <span class="k">if</span> <span class="n">end</span> <span class="o">!=</span> <span class="n">max_page</span><span class="p">:</span> <span class="n">append</span><span class="p">(</span><span class="s">&quot;&lt;li&gt;&lt;a href=</span><span class="se">\&quot;</span><span class="si">%s</span><span class="se">\&quot;</span><span class="s">&gt;</span><span class="si">%d</span><span class="s">&lt;/a&gt;&lt;/li&gt;&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">helper</span><span class="o">.</span><span class="n">page_link</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">max_page</span><span class="p">),</span> <span class="n">max_page</span><span class="p">))</span>
+  <span class="n">append</span><span class="p">(</span><span class="s">&quot;&lt;li class=</span><span class="se">\&quot;</span><span class="si">%s</span><span class="se">\&quot;</span><span class="s">&gt;</span><span class="si">%s</span><span class="s">&lt;/li&gt;&quot;</span><span class="o">%</span> \
+    <span class="p">((</span><span class="n">page</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">max_page</span>  <span class="ow">and</span> <span class="p">(</span><span class="s">&quot;next-off&quot;</span><span class="p">,</span> <span class="s">&quot;Next&amp;raquo;&quot;</span><span class="p">)</span> <span class="ow">or</span>\
+     <span class="p">(</span><span class="s">&quot;next&quot;</span><span class="p">,</span> <span class="s">&quot;&lt;a href=</span><span class="se">\&quot;</span><span class="si">%s</span><span class="se">\&quot;</span><span class="s"> rel=</span><span class="se">\&quot;</span><span class="s">next</span><span class="se">\&quot;</span><span class="s">&gt;Next&amp;raquo;&lt;/a&gt;&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">helper</span><span class="o">.</span><span class="n">page_link</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">page</span><span class="o">+</span><span class="mi">1</span><span class="p">)))))</span>
+
+  <span class="n">append</span><span class="p">(</span><span class="s">&quot;&lt;/ul&gt;&quot;</span><span class="p">)</span>
+  <span class="k">return</span> <span class="s">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tpl</span><span class="p">)</span>
+
+<span class="c"># }}}</span>
+
+<span class="c"># db {{{</span>
+<span class="k">def</span> <span class="nf">find_entry_by_id</span><span class="p">(</span><span class="n">entry_id</span><span class="p">):</span>
+  <span class="k">return</span> <span class="n">app</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">select_one</span><span class="p">([</span><span class="n">Entry</span><span class="p">],</span> <span class="n">cond</span><span class="o">=</span><span class="s">&quot;id=?&quot;</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="p">[</span><span class="n">entry_id</span><span class="p">])</span>
+
+<span class="k">def</span> <span class="nf">find_entries</span><span class="p">(</span><span class="n">offset</span><span class="p">,</span> <span class="n">limit</span><span class="p">):</span>
+  <span class="k">return</span> <span class="n">app</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">select</span><span class="p">([</span><span class="n">Entry</span><span class="p">],</span>
+    <span class="n">cond</span><span class="o">=</span><span class="s">&quot;1 order by created_at desc limit ? offset ?&quot;</span><span class="p">,</span>
+    <span class="n">values</span><span class="o">=</span><span class="p">[</span><span class="n">limit</span><span class="p">,</span> <span class="n">offset</span><span class="p">])</span>
+
+<span class="k">def</span> <span class="nf">count_entries</span><span class="p">():</span>
+  <span class="k">return</span> <span class="n">app</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">select_one</span><span class="p">([</span><span class="n">Entry</span><span class="p">],</span> <span class="n">select</span><span class="o">=</span><span class="s">&quot;SELECT count(id) as count from </span><span class="si">%(tables)s</span><span class="s">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">count</span>
+<span class="c"># }}}</span>
+
+<span class="k">with</span> <span class="n">app</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">context_setup_filter</span><span class="p">):</span>
+  <span class="nd">@app.get</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">)</span>
+  <span class="k">def</span> <span class="nf">index</span><span class="p">():</span>
+    <span class="n">limit</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">vars</span><span class="o">.</span><span class="n">entry_per_page</span>
+    <span class="n">offset</span> <span class="o">=</span> <span class="n">limit</span><span class="o">*</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">req</span><span class="o">.</span><span class="n">input</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;page&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">c</span><span class="o">.</span><span class="n">entries</span> <span class="o">=</span> <span class="n">find_entries</span><span class="p">(</span><span class="n">offset</span><span class="p">,</span> <span class="n">limit</span><span class="p">)</span>
+    <span class="n">c</span><span class="o">.</span><span class="n">count</span>   <span class="o">=</span> <span class="n">count_entries</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">app</span><span class="o">.</span><span class="n">renderer</span><span class="o">.</span><span class="n">show_entries</span><span class="p">({</span><span class="s">&quot;c&quot;</span><span class="p">:</span><span class="n">c</span><span class="p">})</span>
+
+  <span class="nd">@app.get</span><span class="p">(</span><span class="s">&quot;articles/(int:\d+)&quot;</span><span class="p">)</span>
+  <span class="k">def</span> <span class="nf">show_entry</span><span class="p">(</span><span class="n">entry_id</span><span class="p">):</span>
+    <span class="n">c</span><span class="o">.</span><span class="n">entry</span> <span class="o">=</span> <span class="n">find_entry_by_id</span><span class="p">(</span><span class="n">entry_id</span><span class="p">)</span>
+    <span class="n">c</span><span class="o">.</span><span class="n">title</span> <span class="o">+=</span> <span class="s">&quot; :: </span><span class="si">%s</span><span class="s">&quot;</span><span class="o">%</span><span class="n">c</span><span class="o">.</span><span class="n">entry</span><span class="o">.</span><span class="n">title</span>
+    <span class="k">return</span> <span class="n">app</span><span class="o">.</span><span class="n">renderer</span><span class="o">.</span><span class="n">show_entry</span><span class="p">({</span><span class="s">&quot;c&quot;</span><span class="p">:</span><span class="n">c</span><span class="p">})</span>
+
+  <span class="nd">@app.get</span><span class="p">(</span><span class="s">&quot;admin/signin&quot;</span><span class="p">)</span>
+  <span class="k">def</span> <span class="nf">admin_signin_form</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">app</span><span class="o">.</span><span class="n">renderer</span><span class="o">.</span><span class="n">admin_signin_form</span><span class="p">({</span><span class="s">&quot;c&quot;</span><span class="p">:</span><span class="n">c</span><span class="p">})</span>
+
+  <span class="nd">@app.post</span><span class="p">(</span><span class="s">&quot;admin/signin&quot;</span><span class="p">)</span>
+  <span class="k">def</span> <span class="nf">admin_signin</span><span class="p">():</span>
+    <span class="k">if</span> <span class="n">app</span><span class="o">.</span><span class="n">req</span><span class="o">.</span><span class="n">input</span><span class="p">[</span><span class="s">&quot;name&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">app</span><span class="o">.</span><span class="n">vars</span><span class="o">.</span><span class="n">admin_name</span> <span class="ow">and</span> \
+        <span class="n">app</span><span class="o">.</span><span class="n">req</span><span class="o">.</span><span class="n">input</span><span class="p">[</span><span class="s">&quot;password&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">app</span><span class="o">.</span><span class="n">vars</span><span class="o">.</span><span class="n">admin_password</span><span class="p">:</span>
+      <span class="n">app</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="s">&quot;signin&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
+      <span class="n">app</span><span class="o">.</span><span class="n">res</span><span class="o">.</span><span class="n">redirect</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">url</span><span class="o">.</span><span class="n">admin_index</span><span class="p">())</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">errors</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;Signin failed.&quot;</span><span class="p">]</span>
+      <span class="k">return</span> <span class="n">app</span><span class="o">.</span><span class="n">renderer</span><span class="o">.</span><span class="n">admin_signin_form</span><span class="p">({</span><span class="s">&quot;c&quot;</span><span class="p">:</span><span class="n">c</span><span class="p">})</span>
+
+
+  <span class="k">with</span> <span class="n">app</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">admin_filter</span><span class="p">,</span> <span class="n">flash_filter</span><span class="p">):</span>
+    <span class="nd">@app.get</span><span class="p">(</span><span class="s">&quot;admin&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">admin_index</span><span class="p">():</span>
+      <span class="k">return</span> <span class="n">app</span><span class="o">.</span><span class="n">renderer</span><span class="o">.</span><span class="n">admin_index</span><span class="p">({</span><span class="s">&quot;c&quot;</span><span class="p">:</span><span class="n">c</span><span class="p">})</span>
+
+    <span class="nd">@app.get</span><span class="p">(</span><span class="s">&quot;admin/signout&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">admin_signout</span><span class="p">():</span>
+      <span class="n">app</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">kill</span><span class="p">()</span>
+      <span class="n">app</span><span class="o">.</span><span class="n">res</span><span class="o">.</span><span class="n">redirect</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">url</span><span class="o">.</span><span class="n">admin_signin_form</span><span class="p">())</span>
+
+    <span class="nd">@app.get</span><span class="p">(</span><span class="s">&quot;admin/entry/new&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">admin_entry_new</span><span class="p">():</span>
+      <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="s">&quot;entry&quot;</span><span class="p">):</span>
+        <span class="n">c</span><span class="o">.</span><span class="n">entry</span> <span class="o">=</span> <span class="n">Entry</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span>
+      <span class="k">return</span> <span class="n">app</span><span class="o">.</span><span class="n">renderer</span><span class="o">.</span><span class="n">admin_entry_new</span><span class="p">({</span><span class="s">&quot;c&quot;</span><span class="p">:</span><span class="n">c</span><span class="p">})</span>
+
+    <span class="nd">@app.post</span><span class="p">(</span><span class="s">&quot;admin/entry/create&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">admin_entry_create</span><span class="p">():</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">entry</span> <span class="o">=</span> <span class="n">Entry</span><span class="p">(</span><span class="o">**</span><span class="n">app</span><span class="o">.</span><span class="n">req</span><span class="o">.</span><span class="n">input</span><span class="p">[</span><span class="s">&quot;entry&quot;</span><span class="p">])</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">errors</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">entry</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span>
+      <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">errors</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">admin_entry_new</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+      <span class="n">app</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">entry</span><span class="p">)</span>
+      <span class="n">app</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="s">&quot;flash&quot;</span><span class="p">][</span><span class="s">&quot;message&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;Entry added.&quot;</span>
+      <span class="n">app</span><span class="o">.</span><span class="n">res</span><span class="o">.</span><span class="n">redirect</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">url</span><span class="o">.</span><span class="n">admin_index</span><span class="p">())</span>
+
+<span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">DB_FILE</span><span class="p">):</span>
+  <span class="n">db</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">ext</span><span class="o">.</span><span class="n">database</span><span class="o">.</span><span class="n">create_new_session</span><span class="p">()</span>
+  <span class="n">db</span><span class="o">.</span><span class="n">autocommit</span> <span class="o">=</span> <span class="bp">True</span>
+  <span class="k">try</span><span class="p">:</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&quot;&quot;&quot; CREATE TABLE entries (</span>
+<span class="s">      id INTEGER PRIMARY KEY NOT NULL,</span>
+<span class="s">      title TEXT,</span>
+<span class="s">      body TEXT,</span>
+<span class="s">      created_at TIMESTAMP); &quot;&quot;&quot;</span> <span class="p">)</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">DatabaseSessionStore</span><span class="o">.</span><span class="n">SCHEMA</span><span class="p">)</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">DatabaseSessionStore</span><span class="o">.</span><span class="n">INDEX</span><span class="p">)</span>
+  <span class="k">finally</span><span class="p">:</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+  <span class="n">app</span><span class="o">.</span><span class="n">serve_forever</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Overview</a><ul>
+<li><a class="reference internal" href="#features">Features</a><ul>
+<li><a class="reference internal" href="#asynchronous-applications">Asynchronous applications</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#extensions">Extensions</a><ul>
+<li><a class="reference internal" href="#creating-your-extension">Creating your extension</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#requirements">Requirements</a></li>
+<li><a class="reference internal" href="#installation">Installation</a></li>
+<li><a class="reference internal" href="#example">Example</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Welcome to rays&#8217;s documentation!</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="development.html"
+                        title="next chapter">Development</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/overview.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="development.html" title="Development"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to rays’s documentation!"
+             >previous</a> |</li>
+        <li><a href="index.html">rays 0.4.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2009-2012, Yusuke Inuzuka.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>
