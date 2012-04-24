@@ -37,7 +37,7 @@ from datetime import datetime, timedelta
 from hashlib import sha1
 
 __author__ = "Yusuke Inuzuka"
-__version__ = "0.4.0"
+__version__ = "0.4.1"
 __license__ = 'MIT'
 
 # core utilities {{{
@@ -445,7 +445,7 @@ class Action(PropertyCachable): # {{{
     for generator in generators:
       next(generator)
     self.app.res.content = self.func(*a, **kw)
-    for generator in generators:
+    for generator in reversed(generators):
       try:
         next(generator)
       except StopIteration:
@@ -623,7 +623,7 @@ class Application(Hookable): # {{{
         f = Action(self, f)
       f.method = method
       f.path_pattern = pattern
-      for filter in reversed(self.current_filters):
+      for filter in self.current_filters:
         if isinstance(filter, (list, tuple)):
           excepts = filter[1].get("except",[])
           if f.name in excepts or f.func in excepts: continue

@@ -158,10 +158,10 @@ class TestApplication(Base):
       def test_get_error():
         app.res.notfound()
   
-      @app.get("test1")
-      @app.apply_filter(filter_c)
-      def test_get1():
-        return ""
+      with app.filter(filter_c):
+        @app.get("test1")
+        def test_get1():
+          return ""
   
       @app.get("_test_without")
       def _test_without():
@@ -207,6 +207,36 @@ class TestApplication(Base):
     assert "filter_a_after" not in check_dict
     assert "filter_b_pre" not in check_dict
     assert "filter_b_after" not in check_dict
+
+  def test_filter_order(self):
+    app = self.app
+
+    buffer = []
+    def filter_a(*a, **k):
+      buffer.append(1)
+      yield
+      buffer.append(6)
+
+    def filter_b(*a, **k):
+      buffer.append(2)
+      yield
+      buffer.append(5)
+
+    def filter_c(*a, **k):
+      buffer.append(3)
+      yield
+      buffer.append(4)
+
+    with app.filter(filter_a, filter_b):
+      with app.filter(filter_c):
+        @app.get("test")
+        def test_get():
+          return "ok"
+
+    self.finish_app_config()
+
+    assert b"ok" in self.browser.get(self.url("test_get")).body
+    assert [1,2,3,4,5,6] == buffer
 
   def test_before_hooks1(self):
     app = self.app
