@@ -89,13 +89,17 @@ class TestRequest(Base):
 
       assert req.input["obj"]["p1"] == u_("プロパティ1")
       assert req.input["obj"]["p2"] == u_("プロパティ2")
+      assert isinstance(req.input["lst"], list)
+      assert req.input["lst"][0] == u_("リスト1")
+      assert req.input["lst"][1] == u_("リスト2")
       return app.req.action.name
     self.finish_app_config()
 
     req = app.req
     response = self.browser.post(self.url("index", 10, u_("テスト")), 
        [("postdata", b_("ポストデータ1")), ("postdata", b_("ポストデータ2")),
-        ("obj[p1]", b_("プロパティ1")), ("obj[p2]", b_("プロパティ2"))
+        ("obj[p1]", b_("プロパティ1")), ("obj[p2]", b_("プロパティ2")),
+        ("lst[]", b_("リスト1")), ("lst[]", b_("リスト2"))
        ]
     )
     assert response.body == b"index"

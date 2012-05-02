@@ -1137,7 +1137,7 @@ class Request(PropertyCachable): # {{{
       action     
           Requested rays.Action object.
   """
-  PARAM_NAME = re.compile("(\w+)\[(\w+)\]")
+  PARAM_NAME = re.compile("(\w+)\[(\w*)\]")
   def __init__(self, env):
     if env.get('HTTPS', '').lower() in ['on', 'true', '1'] or env.get("HTTP_X_FORWARDED_PROTO") == "https":
       env["wsgi.url_scheme"] = 'https'
@@ -1154,10 +1154,14 @@ class Request(PropertyCachable): # {{{
       m = self.PARAM_NAME.match(k)
       if m:
         name = m.group(1)
-        if name not in input:
-          input[name] = {}
-        d = input[name]
         key = m.group(2)
+        if key:
+          if name not in input:
+            input[name] = {}
+          d = input[name]
+        else:
+          d = input
+          key = name
       else:
         d = input
         key = k
