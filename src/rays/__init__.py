@@ -1179,6 +1179,9 @@ class Request(PropertyCachable): # {{{
     storage = cgi.FieldStorage(fp=fp, environ=self.env, keep_blank_values=1)
 
     def _decode(v):
+      if v.filename:
+        return v
+      v = v.value
       if isinstance(v, string_types):
         v = guess_decode(v)
       return v
@@ -1186,11 +1189,9 @@ class Request(PropertyCachable): # {{{
     for k in storage:
       value = storage[k]
       if isinstance(value, list):
-        [parse_input(k,_decode(v.value), True) for v in value]
-      elif not value.filename:
-        parse_input(k, _decode(value.value), False)
+        [parse_input(k,_decode(v), True) for v in value]
       else:
-        input[k] = value
+        parse_input(k, _decode(value), False)
 
     for k,v in parse_qsl(self.env.get('QUERY_STRING',"")):
       if isinstance(v, string_types):
