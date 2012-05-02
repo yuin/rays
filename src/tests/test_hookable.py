@@ -111,16 +111,40 @@ class TestHookable(Base):
   
   def test_hookable_class(self):
     
-    class A(HookableClass): pass
-    class B(A): pass
-  
-    A.add_hook("test0", lambda v: v, name="hook1")
-    B.add_hook("test0", lambda v: v, name="hook2")
-  
+    class A(HookableClass):
+      def class_init(cls):
+        HookableClass.class_init(cls)
+
+        @cls.hook("test0")
+        def hook1(v):
+          return v
+
+    class B(A):
+      def class_init(cls):
+        A.class_init(cls)
+
+        @cls.hook("test0")
+        def hook2(v):
+          return v
+
+    class C(A):
+      def class_init(cls):
+        A.class_init(cls)
+
+        @cls.hook("test0")
+        def hook3(v):
+          return v
+
     hooks = A.hookable.hooks["test0"]
     assert "hook1" == hooks[0].name
     assert 1 == len(hooks)
   
     hooks = B.hookable.hooks["test0"]
-    assert "hook2" == hooks[0].name
-    assert 1 == len(hooks)
+    assert "hook1" == hooks[0].name
+    assert "hook2" == hooks[1].name
+    assert 2 == len(hooks)
+
+    hooks = C.hookable.hooks["test0"]
+    assert "hook1" == hooks[0].name
+    assert "hook3" == hooks[1].name
+    assert 2 == len(hooks)

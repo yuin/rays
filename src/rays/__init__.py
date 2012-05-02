@@ -1938,6 +1938,8 @@ class Model(HookableClass): # {{{
   """
 
   def class_init(cls):
+    HookableClass.class_init(cls)
+
     cls.snake_case_name = to_snake_case(cls.__name__)
     if not getattr(cls, "table_name", None):
       cls.table_name = cls.snake_case_name
