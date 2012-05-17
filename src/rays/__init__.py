@@ -1858,6 +1858,7 @@ class ExtensionLoader(object): # {{{
           val = getattr(mod, attr_name)
           if isinstance(val, type) and issubclass(val, Extension):
             g[val.__name__] = val
+            self.app.run_hook("after_load_extension", [val.__name__, val])
 
 # }}}
 
