@@ -740,8 +740,6 @@ class Application(Hookable): # {{{
         response.notfound()
     except Exception as e:
       self._handle_exception(response, e)
-    finally:
-      self.run_hook("before_start_response")
 
     # gevent.WebSocketHandler passes None as a start_response function
     if start_response is None: return
@@ -796,9 +794,10 @@ class Application(Hookable): # {{{
     return content
 
   def _send_back_response(self, response):
-    content = self.convert_response(response)
+    response.iterable_content = self.convert_response(response)
+    self.run_hook("before_start_response")
     response.start_response()
-    return content
+    return response.iterable_content
 
   def stop(self):
     """Tells the run_xxx() loop to stop and waits until it does.
@@ -1330,6 +1329,8 @@ class Response(object): # {{{
           Charcter set name for the response, such as "UTF-8"
       content
           Content for the response as an IO or string object 
+      iterable_content
+          Content for the response as an iterable object(list of bytes or an IO object)
       exception
           Exception that was raised while this request
       is_headers_written
@@ -1342,6 +1343,7 @@ class Response(object): # {{{
     self.status_code = 200
     self.charset ='UTF-8'
     self.content = None
+    self.iterable_content = None
     self.exception = None
     self.is_headers_written = False
     self._start_response = start_response
