@@ -1908,12 +1908,10 @@ class DatabaseExtension(Extension):
 
   def on_before_dispatch(self, *a):
     self.app.db = self.create_new_session()
-    if self.transaction == "commit_on_success":
-      self.app.db.begin()
 
   def on_before_start_response(self, *a):
     try:
-      if self.transaction == "commit_on_success":
+      if self.transaction == "commit_on_success" and self.app.db.transaction_started:
         if self.app.res.is_success:
           self.app.db.commit()
         else:
@@ -1974,7 +1972,10 @@ class Database(object): # {{{
   RETRY_LIMIT = 30
   RETRY_WAIT_SEC  = 0.01
   def __init__(self, connection):
-    self.connection = sqlite3.connect(connection, detect_types=sqlite3.PARSE_DECLTYPES, check_same_thread=False)
+    self.connection_params = dict(database=connection, detect_types=sqlite3.PARSE_DECLTYPES, check_same_thread=False)
+    self._connection = None
+    self._schema = collections.defaultdict(dict)
+    self.transaction_started = False
     def factory(cursor, row):
       class _(sqlite3.Row):
         def __init__(self, cursor, row):
@@ -1983,11 +1984,24 @@ class Database(object): # {{{
           self.iterkeys = lambda : (col[0] for col in cursor.description)
       return _(cursor, row)
     self.connection.row_factory = factory
-    self.schema = collections.defaultdict(dict)
-    self.load_schema()
     self.app = None
 
+  @property
+  def connection(self):
+    if not self._connection:
+      self._connection = sqlite3.connect(**self.connection_params)
+    return self._connection
+
+  @property
+  def schema(self):
+    if len(self._schema) == 0:
+      self.load_schema()
+    return self._schema
+
   def _execute(self, obj, *args, **kw):
+    if not self.transaction_started:
+      if not self.autocommit:
+        self.begin()
     is_debug = hasattr(self, "app") and self.app and self.app.debug
     if is_debug:
       self.app.logger.debug(",".join(u_(a) for a in args) + ", "+ u_(kw))
@@ -2023,19 +2037,18 @@ class Database(object): # {{{
 
   def load_schema(self):
     cur = self.connection.cursor()
-    sql = "SELECT * from sqlite_master;"
-    self._execute(cur, sql)
+    cur.execute("SELECT * from sqlite_master;")
     for i, row in enumerate(cur):
       if row[0] == "table":
-        d = self.schema[row[1]]
+        d = self._schema[row[1]]
         d["table"] = row[4]
         d["colnames"] = [v.strip().split(" ")[0]
                           for v in row[4].split("(")[1].split(",")]
         d["index"] = []
       elif row[0] == "index":
-        if "index" not in self.schema[row[2]]:
-          self.schema[row[2]]["index"] = []
-        self.schema[row[2]]["index"].append(row[1])
+        if "index" not in self._schema[row[2]]:
+          self._schema[row[2]]["index"] = []
+        self._schema[row[2]]["index"].append(row[1])
     cur.close()
 
   def set_autocommit(self, value):
@@ -2076,21 +2089,28 @@ class Database(object): # {{{
 
   def begin(self):
     """Begins a new transaction."""
-    if self.app.debug:
-      self.app.logger.debug("BEGIN")
-    self.execute("BEGIN")
+    old_transaction_started = self.transaction_started
+    self.transaction_started = True
+    if not old_transaction_started:
+      self.execute("BEGIN")
 
   def commit(self):
     """Commits the transaction."""
-    if self.app.debug:
-      self.app.logger.debug("COMMIT")
-    self.connection.commit()
+    old_transaction_started = self.transaction_started
+    self.transaction_started = False
+    if old_transaction_started: 
+      if self.app.debug:
+        self.app.logger.debug("COMMIT")
+      self.connection.commit()
 
   def rollback(self): 
     """Roll backs the transaction."""
-    if self.app.debug:
-      self.app.logger.debug("ROLLBACK")
-    self.connection.rollback()
+    old_transaction_started = self.transaction_started
+    self.transaction_started = False
+    if old_transaction_started:
+      if self.app.debug:
+        self.app.logger.debug("ROLLBACK")
+      self.connection.rollback()
 
   def shell(self):
     """Starts a interactive database shell."""
