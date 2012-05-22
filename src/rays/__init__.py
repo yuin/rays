@@ -1974,7 +1974,7 @@ class Database(object): # {{{
   RETRY_LIMIT = 30
   RETRY_WAIT_SEC  = 0.01
   def __init__(self, connection):
-    self.connection = sqlite3.connect(connection, detect_types=sqlite3.PARSE_DECLTYPES)
+    self.connection = sqlite3.connect(connection, detect_types=sqlite3.PARSE_DECLTYPES, check_same_thread=False)
     def factory(cursor, row):
       class _(sqlite3.Row):
         def __init__(self, cursor, row):
