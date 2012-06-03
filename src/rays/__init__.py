@@ -1854,7 +1854,10 @@ class ExtensionLoader(object): # {{{
         continue
       if name[-3:] == ".py" or "." not in name:
         modname = name.replace(".py", "")
-        __import__(self.ext_module.__name__+"."+modname)
+        try:
+          __import__(self.ext_module.__name__+"."+modname)
+        except:
+          continue
         mod = getattr(self.ext_module, modname)
         for attr_name in dir(mod):
           val = getattr(mod, attr_name)
