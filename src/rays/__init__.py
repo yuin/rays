@@ -1845,19 +1845,19 @@ class ExtensionLoader(object): # {{{
 
     To turn an extension off, prefix it's module name with an underscore.
     """
-
-    lst = os.listdir(os.path.dirname(self.ext_module.__file__))
+    directory = os.path.dirname(self.ext_module.__file__)
+    lst = os.listdir(directory)
     lst.sort()
     g = globals()
     for name in lst:
       if name[0] == "_":
         continue
+      if os.path.isdir(os.path.join(directory, name)) and not os.path.exists(os.path.join(directory, name, "__init__.py")):
+        continue
+      
       if name[-3:] == ".py" or "." not in name:
         modname = name.replace(".py", "")
-        try:
-          __import__(self.ext_module.__name__+"."+modname)
-        except:
-          continue
+        __import__(self.ext_module.__name__+"."+modname)
         mod = getattr(self.ext_module, modname)
         for attr_name in dir(mod):
           val = getattr(mod, attr_name)
