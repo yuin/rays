@@ -2008,7 +2008,7 @@ class Database(object): # {{{
       if hasattr(self, "app"):
         self.app.run_hook("after_connect_database", [self])
 
-    if not self.transaction_started:
+    if not self.transaction_started and not kw.get("without_transaction"):
       if not self.autocommit:
         self.begin()
 
