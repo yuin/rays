@@ -1008,7 +1008,7 @@ class Application(Hookable): # {{{
     
 #}}}
 
-class AcceptanceValue(PropertyCachable):
+class AcceptanceValue(PropertyCachable): # {{{
   """'Accept-\*' header value.
 
   :Attributes:
@@ -1061,7 +1061,7 @@ class AcceptanceValue(PropertyCachable):
       buffer.append("=")
       buffer.append(value)
     return "<%s %s>"%(self.__class__.__name__, "".join(buffer))
-
+# }}}
 
 class Accept(PropertyCachable): # {{{
   """Handles "Accept-\*" headers.(See RFC2616 Section 14.1 - 14.4)
@@ -1979,6 +1979,7 @@ class Database(object): # {{{
     self._connection = None
     self._schema = collections.defaultdict(dict)
     self.transaction_started = False
+    self.has_executed_query = False
     def factory(cursor, row):
       class _(sqlite3.Row):
         def __init__(self, cursor, row):
@@ -2002,9 +2003,15 @@ class Database(object): # {{{
     return self._schema
 
   def _execute(self, obj, *args, **kw):
+    if not self.has_executed_query:
+      self.has_executed_query = True
+      if hasattr(self, "app"):
+        self.app.run_hook("after_connect_database", [self])
+
     if not self.transaction_started:
       if not self.autocommit:
         self.begin()
+
     is_debug = hasattr(self, "app") and self.app and self.app.debug
     if is_debug:
       self.app.logger.debug(",".join(u_(a) for a in args) + ", "+ u_(kw))

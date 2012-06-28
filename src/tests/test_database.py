@@ -47,6 +47,11 @@ class TestDatabase(Base):
     except:
       pass
     app = self.app
+    @app.hook("after_connect_database")
+    def default_database_pragma(db):
+      db.execute("PRAGMA journal_mode = WAL")
+      db.execute("PRAGMA synchronous = NORMAL")
+
     if "declarative" in method.__name__:
       transaction = "commit_on_success"
     else:
