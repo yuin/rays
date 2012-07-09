@@ -489,3 +489,19 @@ class TestApplication(Base):
     response = self.browser.get(self.url("get3"))
     assert u_("ユニコード").encode("utf8") in response.body
 
+  def test_javascript_url_builder(self):
+    app = self.app
+    @app.get("get1/(int:\d+)")
+    def get1(id):
+      pass
+    @app.get("get2/(int:\d+)/(unicode:\s+)")
+    def get2(id, name):
+      pass
+    self.finish_app_config()
+
+    assert """if(typeof(rays) == 'undefined'){ window.rays={};}(function(){var patterns={"get1": ["/get1/", ""], "get2": ["/get2/", "/", ""], "_dummy": ["/_dummy"]}, host="localhost";window.rays.url=function(name, args, _options){
+      var options = _options || {}; var parts   = patterns[name]; var path    = "";
+      if(parts.length == 1) { path = parts.join(""); }else{ for(var i = 0, l = args.length; i < l; i++){ path = path + parts[i] + args[i]; } path = path + parts[parts.length-1];}
+      var protocol = "http"; if(options.ssl || (!options.ssl && location.protocol == "https:")){ protocol = "https"; }
+      var url = protocol+"://"+host+path; if(options.query) { url = url+"?"+options.query } return url;
+    };})();""" == app.generate_javascript_url_builder()

@@ -32,7 +32,7 @@ from .compat import *
 
 import re, cgi, traceback, threading, os, os.path, mimetypes, types
 import time, collections, contextlib, codecs, marshal, functools, inspect
-import logging
+import logging, json
 from datetime import datetime, timedelta
 from hashlib import sha1
 
@@ -696,6 +696,25 @@ class Application(Hookable): # {{{
 
   def _url(self, name, *args, **kw):
     return self.get_url_builder(name)(*args, **kw)
+
+  def generate_javascript_url_builder(self, names = None):
+    """Returns javascript code which allows client side code to generate application urls."""
+    names = names or list(iter_keys(self.actions_map))
+    result = []
+    code   = []
+    result.append("if(typeof(rays) == 'undefined'){ window.rays={};}");
+    patterns = {}
+    for name in names:
+      patterns[name] = re.compile("\([^\)]+\)").split(self.actions_map[name].full_path_pattern)
+    code.append("var patterns=%s, host=\"%s\";"%(json.dumps(patterns), self.host))
+    code.append("""window.rays.url=function(name, args, _options){
+      var options = _options || {}; var parts   = patterns[name]; var path    = "";
+      if(parts.length == 1) { path = parts.join(""); }else{ for(var i = 0, l = args.length; i < l; i++){ path = path + parts[i] + args[i]; } path = path + parts[parts.length-1];}
+      var protocol = "http"; if(options.ssl || (!options.ssl && location.protocol == "https:")){ protocol = "https"; }
+      var url = protocol+"://"+host+path; if(options.query) { url = url+"?"+options.query } return url;
+    };""");
+    result.append("(function(){%s})();"%("".join(code)))
+    return "".join(result)
 
   def __call__(self, env, start_response):
     """ WSGI callable method."""
