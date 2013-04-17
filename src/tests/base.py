@@ -10,7 +10,13 @@ import rays
 from rays.compat import *
 
 import pytest
+import requests.cookies
 from webtest import TestApp
+
+class RaysTestApp(TestApp):
+  def set_cookie(self, name, value, **kwargs):
+    cookie = requests.cookies.create_cookie(name, value, **kwargs)
+    self.cookiejar.set_cookie(cookie)
 
 class Base(object):
   TEST_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -47,7 +53,7 @@ class Base(object):
            "HTTP_HOST" : "localhost",
            "SERVER_PORT": "80"}
     env.update(environ or {})
-    self.browser = TestApp(self.app, env)
+    self.browser = RaysTestApp(self.app, env)
 
   def init_app(self, environ = None):
     self.app = rays.Application(debug=True)

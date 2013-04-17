@@ -159,7 +159,7 @@ class SessionBase(Base):
   
     
     self.browser.get(self.url("session_set"))
-    self.browser.cookies[app.ext.session.cookie_name] = "tampered"
+    self.browser.set_cookie(app.ext.session.cookie_name, "tampered")
     with pytest.raises(AssertionError):
       self.browser.get(self.url("session_get1"))
 
