@@ -1,5 +1,9 @@
 Changes
 ============
+0.4.1 (April 24, 2012):
+--------------------------------------------
+- Fixed: Application#filter applies filters with unexpected order
+
 0.4.0 (April 12, 2012):
 --------------------------------------------
 - Improved: **rays now supports Python3.2 .**

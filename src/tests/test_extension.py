@@ -12,6 +12,14 @@ import pytest
 class TestExtension(Base):
   def test_extension_loader(self):
     app = self.app
+
+    called = []
+    @app.hook("after_load_extension")
+    def myhook(name, extension):
+      if name == "TestExtension":
+        assert extension == extensions.test.TestExtension
+        called.append(1)
+
     app.config([
       ("ExtensionLoader", {"module": extensions }),
       ("TestExtension", {"name": "aaa"})
@@ -21,6 +29,7 @@ class TestExtension(Base):
     assert app.ext.test
     assert "aaa" == app.ext.test.name
     assert (not app.ext.test1)
+    assert called
   
     with pytest.raises(NameError):
       app.config("Test1Extension", {"name": "aaa"})

@@ -32,12 +32,12 @@ from .compat import *
 
 import re, cgi, traceback, threading, os, os.path, mimetypes, types
 import time, collections, contextlib, codecs, marshal, functools, inspect
-import logging
+import logging, json
 from datetime import datetime, timedelta
 from hashlib import sha1
 
 __author__ = "Yusuke Inuzuka"
-__version__ = "0.4.0"
+__version__ = "0.4.1"
 __license__ = 'MIT'
 
 # core utilities {{{
@@ -445,7 +445,7 @@ class Action(PropertyCachable): # {{{
     for generator in generators:
       next(generator)
     self.app.res.content = self.func(*a, **kw)
-    for generator in generators:
+    for generator in reversed(generators):
       try:
         next(generator)
       except StopIteration:
@@ -623,7 +623,7 @@ class Application(Hookable): # {{{
         f = Action(self, f)
       f.method = method
       f.path_pattern = pattern
-      for filter in reversed(self.current_filters):
+      for filter in self.current_filters:
         if isinstance(filter, (list, tuple)):
           excepts = filter[1].get("except",[])
           if f.name in excepts or f.func in excepts: continue
@@ -697,6 +697,25 @@ class Application(Hookable): # {{{
   def _url(self, name, *args, **kw):
     return self.get_url_builder(name)(*args, **kw)
 
+  def generate_javascript_url_builder(self, names = None):
+    """Returns javascript code which allows client side code to generate application urls."""
+    names = names or list(iter_keys(self.actions_map))
+    result = []
+    code   = []
+    result.append("if(typeof(rays) == 'undefined'){ window.rays={};}");
+    patterns = {}
+    for name in names:
+      patterns[name] = re.compile("\([^\)]+\)").split(self.actions_map[name].full_path_pattern)
+    code.append("var patterns=%s, host=\"%s\";"%(json.dumps(patterns), self.host))
+    code.append("""window.rays.url=function(name, args, _options){
+      var options = _options || {}; var parts   = patterns[name]; var path    = "";
+      if(parts.length == 1) { path = parts.join(""); }else{ for(var i = 0, l = args.length; i < l; i++){ path = path + parts[i] + args[i]; } path = path + parts[parts.length-1];}
+      var protocol = "http"; if(options.ssl || (!options.ssl && location.protocol == "https:")){ protocol = "https"; }
+      var url = protocol+"://"+host+path; if(options.query) { url = url+"?"+options.query } return url;
+    };""");
+    result.append("(function(){%s})();"%("".join(code)))
+    return "".join(result)
+
   def __call__(self, env, start_response):
     """ WSGI callable method."""
     if not self.initialized:
@@ -740,8 +759,6 @@ class Application(Hookable): # {{{
         response.notfound()
     except Exception as e:
       self._handle_exception(response, e)
-    finally:
-      self.run_hook("before_start_response")
 
     # gevent.WebSocketHandler passes None as a start_response function
     if start_response is None: return
@@ -796,9 +813,10 @@ class Application(Hookable): # {{{
     return content
 
   def _send_back_response(self, response):
-    content = self.convert_response(response)
+    response.iterable_content = self.convert_response(response)
+    self.run_hook("before_start_response")
     response.start_response()
-    return content
+    return response.iterable_content
 
   def stop(self):
     """Tells the run_xxx() loop to stop and waits until it does.
@@ -1009,7 +1027,7 @@ class Application(Hookable): # {{{
     
 #}}}
 
-class AcceptanceValue(PropertyCachable):
+class AcceptanceValue(PropertyCachable): # {{{
   """'Accept-\*' header value.
 
   :Attributes:
@@ -1062,7 +1080,7 @@ class AcceptanceValue(PropertyCachable):
       buffer.append("=")
       buffer.append(value)
     return "<%s %s>"%(self.__class__.__name__, "".join(buffer))
-
+# }}}
 
 class Accept(PropertyCachable): # {{{
   """Handles "Accept-\*" headers.(See RFC2616 Section 14.1 - 14.4)
@@ -1137,7 +1155,7 @@ class Request(PropertyCachable): # {{{
       action     
           Requested rays.Action object.
   """
-  PARAM_NAME = re.compile("(\w+)\[(\w+)\]")
+  PARAM_NAME = re.compile("(\w+)\[(\w*)\]")
   def __init__(self, env):
     if env.get('HTTPS', '').lower() in ['on', 'true', '1'] or env.get("HTTP_X_FORWARDED_PROTO") == "https":
       env["wsgi.url_scheme"] = 'https'
@@ -1154,10 +1172,14 @@ class Request(PropertyCachable): # {{{
       m = self.PARAM_NAME.match(k)
       if m:
         name = m.group(1)
-        if name not in input:
-          input[name] = {}
-        d = input[name]
         key = m.group(2)
+        if key:
+          if name not in input:
+            input[name] = {}
+          d = input[name]
+        else:
+          d = input
+          key = name
       else:
         d = input
         key = k
@@ -1175,6 +1197,9 @@ class Request(PropertyCachable): # {{{
     storage = cgi.FieldStorage(fp=fp, environ=self.env, keep_blank_values=1)
 
     def _decode(v):
+      if v.filename:
+        return v
+      v = v.value
       if isinstance(v, string_types):
         v = guess_decode(v)
       return v
@@ -1182,11 +1207,9 @@ class Request(PropertyCachable): # {{{
     for k in storage:
       value = storage[k]
       if isinstance(value, list):
-        [parse_input(k,_decode(v.value), True) for v in value]
-      elif not value.filename:
-        parse_input(k, _decode(value.value), False)
+        [parse_input(k,_decode(v), True) for v in value]
       else:
-        input[k] = value
+        parse_input(k, _decode(value), False)
 
     for k,v in parse_qsl(self.env.get('QUERY_STRING',"")):
       if isinstance(v, string_types):
@@ -1325,6 +1348,8 @@ class Response(object): # {{{
           Charcter set name for the response, such as "UTF-8"
       content
           Content for the response as an IO or string object 
+      iterable_content
+          Content for the response as an iterable object(list of bytes or an IO object)
       exception
           Exception that was raised while this request
       is_headers_written
@@ -1337,6 +1362,7 @@ class Response(object): # {{{
     self.status_code = 200
     self.charset ='UTF-8'
     self.content = None
+    self.iterable_content = None
     self.exception = None
     self.is_headers_written = False
     self._start_response = start_response
@@ -1838,13 +1864,16 @@ class ExtensionLoader(object): # {{{
 
     To turn an extension off, prefix it's module name with an underscore.
     """
-
-    lst = os.listdir(os.path.dirname(self.ext_module.__file__))
+    directory = os.path.dirname(self.ext_module.__file__)
+    lst = os.listdir(directory)
     lst.sort()
     g = globals()
     for name in lst:
       if name[0] == "_":
         continue
+      if os.path.isdir(os.path.join(directory, name)) and not os.path.exists(os.path.join(directory, name, "__init__.py")):
+        continue
+      
       if name[-3:] == ".py" or "." not in name:
         modname = name.replace(".py", "")
         __import__(self.ext_module.__name__+"."+modname)
@@ -1853,6 +1882,7 @@ class ExtensionLoader(object): # {{{
           val = getattr(mod, attr_name)
           if isinstance(val, type) and issubclass(val, Extension):
             g[val.__name__] = val
+            self.app.run_hook("after_load_extension", [val.__name__, val])
 
 # }}}
 
@@ -1900,12 +1930,10 @@ class DatabaseExtension(Extension):
 
   def on_before_dispatch(self, *a):
     self.app.db = self.create_new_session()
-    if self.transaction == "commit_on_success":
-      self.app.db.begin()
 
   def on_before_start_response(self, *a):
     try:
-      if self.transaction == "commit_on_success":
+      if self.transaction == "commit_on_success" and self.app.db.transaction_started:
         if self.app.res.is_success:
           self.app.db.commit()
         else:
@@ -1933,6 +1961,8 @@ class Model(HookableClass): # {{{
   """
 
   def class_init(cls):
+    HookableClass.class_init(cls)
+
     cls.snake_case_name = to_snake_case(cls.__name__)
     if not getattr(cls, "table_name", None):
       cls.table_name = cls.snake_case_name
@@ -1964,7 +1994,11 @@ class Database(object): # {{{
   RETRY_LIMIT = 30
   RETRY_WAIT_SEC  = 0.01
   def __init__(self, connection):
-    self.connection = sqlite3.connect(connection, detect_types=sqlite3.PARSE_DECLTYPES)
+    self.connection_params = dict(database=connection, detect_types=sqlite3.PARSE_DECLTYPES, check_same_thread=False)
+    self._connection = None
+    self._schema = collections.defaultdict(dict)
+    self.transaction_started = False
+    self.has_executed_query = False
     def factory(cursor, row):
       class _(sqlite3.Row):
         def __init__(self, cursor, row):
@@ -1973,11 +2007,30 @@ class Database(object): # {{{
           self.iterkeys = lambda : (col[0] for col in cursor.description)
       return _(cursor, row)
     self.connection.row_factory = factory
-    self.schema = collections.defaultdict(dict)
-    self.load_schema()
     self.app = None
 
+  @property
+  def connection(self):
+    if not self._connection:
+      self._connection = sqlite3.connect(**self.connection_params)
+    return self._connection
+
+  @property
+  def schema(self):
+    if len(self._schema) == 0:
+      self.load_schema()
+    return self._schema
+
   def _execute(self, obj, *args, **kw):
+    if not self.has_executed_query:
+      self.has_executed_query = True
+      if hasattr(self, "app"):
+        self.app.run_hook("after_connect_database", [self])
+
+    if not self.transaction_started and not kw.pop("without_transaction", None):
+      if not self.autocommit:
+        self.begin()
+
     is_debug = hasattr(self, "app") and self.app and self.app.debug
     if is_debug:
       self.app.logger.debug(",".join(u_(a) for a in args) + ", "+ u_(kw))
@@ -2013,19 +2066,18 @@ class Database(object): # {{{
 
   def load_schema(self):
     cur = self.connection.cursor()
-    sql = "SELECT * from sqlite_master;"
-    self._execute(cur, sql)
+    cur.execute("SELECT * from sqlite_master;")
     for i, row in enumerate(cur):
       if row[0] == "table":
-        d = self.schema[row[1]]
+        d = self._schema[row[1]]
         d["table"] = row[4]
         d["colnames"] = [v.strip().split(" ")[0]
                           for v in row[4].split("(")[1].split(",")]
         d["index"] = []
       elif row[0] == "index":
-        if "index" not in self.schema[row[2]]:
-          self.schema[row[2]]["index"] = []
-        self.schema[row[2]]["index"].append(row[1])
+        if "index" not in self._schema[row[2]]:
+          self._schema[row[2]]["index"] = []
+        self._schema[row[2]]["index"].append(row[1])
     cur.close()
 
   def set_autocommit(self, value):
@@ -2066,21 +2118,28 @@ class Database(object): # {{{
 
   def begin(self):
     """Begins a new transaction."""
-    if self.app.debug:
-      self.app.logger.debug("BEGIN")
-    self.execute("BEGIN")
+    old_transaction_started = self.transaction_started
+    self.transaction_started = True
+    if not old_transaction_started:
+      self.execute("BEGIN")
 
   def commit(self):
     """Commits the transaction."""
-    if self.app.debug:
-      self.app.logger.debug("COMMIT")
-    self.connection.commit()
+    old_transaction_started = self.transaction_started
+    self.transaction_started = False
+    if old_transaction_started: 
+      if self.app.debug:
+        self.app.logger.debug("COMMIT")
+      self.connection.commit()
 
   def rollback(self): 
     """Roll backs the transaction."""
-    if self.app.debug:
-      self.app.logger.debug("ROLLBACK")
-    self.connection.rollback()
+    old_transaction_started = self.transaction_started
+    self.transaction_started = False
+    if old_transaction_started:
+      if self.app.debug:
+        self.app.logger.debug("ROLLBACK")
+      self.connection.rollback()
 
   def shell(self):
     """Starts a interactive database shell."""

@@ -158,10 +158,10 @@ class TestApplication(Base):
       def test_get_error():
         app.res.notfound()
   
-      @app.get("test1")
-      @app.apply_filter(filter_c)
-      def test_get1():
-        return ""
+      with app.filter(filter_c):
+        @app.get("test1")
+        def test_get1():
+          return ""
   
       @app.get("_test_without")
       def _test_without():
@@ -207,6 +207,36 @@ class TestApplication(Base):
     assert "filter_a_after" not in check_dict
     assert "filter_b_pre" not in check_dict
     assert "filter_b_after" not in check_dict
+
+  def test_filter_order(self):
+    app = self.app
+
+    buffer = []
+    def filter_a(*a, **k):
+      buffer.append(1)
+      yield
+      buffer.append(6)
+
+    def filter_b(*a, **k):
+      buffer.append(2)
+      yield
+      buffer.append(5)
+
+    def filter_c(*a, **k):
+      buffer.append(3)
+      yield
+      buffer.append(4)
+
+    with app.filter(filter_a, filter_b):
+      with app.filter(filter_c):
+        @app.get("test")
+        def test_get():
+          return "ok"
+
+    self.finish_app_config()
+
+    assert b"ok" in self.browser.get(self.url("test_get")).body
+    assert [1,2,3,4,5,6] == buffer
 
   def test_before_hooks1(self):
     app = self.app
@@ -459,3 +489,19 @@ class TestApplication(Base):
     response = self.browser.get(self.url("get3"))
     assert u_("ユニコード").encode("utf8") in response.body
 
+  def test_javascript_url_builder(self):
+    app = self.app
+    @app.get("get1/(int:\d+)")
+    def get1(id):
+      pass
+    @app.get("get2/(int:\d+)/(unicode:\s+)")
+    def get2(id, name):
+      pass
+    self.finish_app_config()
+
+    assert """if(typeof(rays) == 'undefined'){ window.rays={};}(function(){var patterns={"get1": ["/get1/", ""], "get2": ["/get2/", "/", ""], "_dummy": ["/_dummy"]}, host="localhost";window.rays.url=function(name, args, _options){
+      var options = _options || {}; var parts   = patterns[name]; var path    = "";
+      if(parts.length == 1) { path = parts.join(""); }else{ for(var i = 0, l = args.length; i < l; i++){ path = path + parts[i] + args[i]; } path = path + parts[parts.length-1];}
+      var protocol = "http"; if(options.ssl || (!options.ssl && location.protocol == "https:")){ protocol = "https"; }
+      var url = protocol+"://"+host+path; if(options.query) { url = url+"?"+options.query } return url;
+    };})();""" == app.generate_javascript_url_builder()
