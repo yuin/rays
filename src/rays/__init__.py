@@ -1670,10 +1670,14 @@ class Embpy(object):
       exec_function(self.compile(), vars, vars)
     except Exception as e:
       if self.src and not isinstance(e, SyntaxError):
-        m = re.match(".*line (\d+).*", traceback.format_exc(2).splitlines()[-2])
+        m = re.match(".*line (\d+).*", traceback.format_exc().splitlines()[-2])
         if m:
           line =  int(m.group(1))
-          e.message =  u_("%s\n%s")%(e.args[0], (u_("\n").join(self.src.splitlines()[0:line])))
+          buf = [e.args[0]]
+          start = max(line-5, 0)
+          for i, v in enumerate(self.src.splitlines()[start:line+5]):
+            buf.append(u_("%04d : %s")%(start+i+1, v))
+          e.message = u_("\n").join(buf)
           e.args = [e.message]
       reraise(e.__class__, e, sys.exc_info()[-1])
     return EmbpyString(u_("").join(vars["__buffer"]))

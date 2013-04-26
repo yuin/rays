@@ -114,9 +114,9 @@ class TestApplication(Base):
     assert self.browser.head(self.url("index")).body.strip() == b""
     assert self.browser.get(self.url("index"), expect_errors = True).status.startswith("405")
 
-  def test_apply_filer(self):
+  def test_apply_filer_to_action(self):
     def filter(*a, **k):
-      pass
+      yield
       
     @self.app.apply_filter(filter)
     @self.app.get("")
@@ -125,6 +125,21 @@ class TestApplication(Base):
     self.finish_app_config()
 
     assert len(self.app.actions_map["index"].filters) == 1
+    assert b"ok" in self.browser.get(self.url("index")).body
+
+  def test_apply_filter_to_function(self):
+    def filter(*a, **k):
+      yield
+      
+    @self.app.get("")
+    @self.app.apply_filter(filter)
+    def index():
+      return "ok"
+    self.finish_app_config()
+
+    assert len(self.app.actions_map["index"].filters) == 1
+    assert b"ok" in self.browser.get(self.url("index")).body
+    
 
   def test_filter(self):
     check_dict = {}
@@ -238,6 +253,7 @@ class TestApplication(Base):
 
     assert b"ok" in self.browser.get(self.url("test_get")).body
     assert [1,2,3,4,5,6] == buffer
+
 
   def test_before_hooks1(self):
     app = self.app
