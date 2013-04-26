@@ -2,6 +2,7 @@
 from __future__ import division, print_function
 
 import sys
+import itertools
 from rays import *
 from rays.compat import *
 from .base import *
@@ -499,9 +500,12 @@ class TestApplication(Base):
       pass
     self.finish_app_config()
 
-    assert """if(typeof(rays) == 'undefined'){ window.rays={};}(function(){var patterns={"get1": ["/get1/", ""], "get2": ["/get2/", "/", ""], "_dummy": ["/_dummy"]}, host="localhost";window.rays.url=function(name, args, _options){
+    patterns = itertools.permutations(['"get1": ["/get1/", ""]', '"get2": ["/get2/", "/", ""]', '"_dummy": ["/_dummy"]'])
+    assert any(["""if(typeof(rays) == 'undefined'){ window.rays={};}(function(){var patterns={%s}, host="localhost";window.rays.url=function(name, args, _options){
       var options = _options || {}; var parts   = patterns[name]; var path    = "";
       if(parts.length == 1) { path = parts.join(""); }else{ for(var i = 0, l = args.length; i < l; i++){ path = path + parts[i] + args[i]; } path = path + parts[parts.length-1];}
       var protocol = "http"; if(options.ssl || (!options.ssl && location.protocol == "https:")){ protocol = "https"; }
       var url = protocol+"://"+host+path; if(options.query) { url = url+"?"+options.query } return url;
-    };})();""" == app.generate_javascript_url_builder()
+    };})();"""%(", ".join(v)) == app.generate_javascript_url_builder() for v in patterns])
+
+
