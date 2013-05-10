@@ -53,12 +53,12 @@ class TestStaticFileExtension(Base):
     assert u_("あいうえお") in response.body.decode("utf8") 
     assert response.status.startswith("200")
 
-  def test_mb_path(self):
-    self.app.config("StaticFileExtension", {"url":"static/", "path": self.TEST_DIR})
-    self.finish_app_config()
+  #def test_mb_path(self):
+  #  self.app.config("StaticFileExtension", {"url":"static/", "path": self.TEST_DIR})
+  #  self.finish_app_config()
 
-    url = self.url("static_file", u_("ファイル.txt"))
-    response = self.browser.get(url)
+  #  url = self.url("static_file", u_("ファイル.txt"))
+  #  response = self.browser.get(url)
 
-    assert u_("コンテンツ") in response.body.decode("utf8") 
-    assert response.status.startswith("200")
+  #  assert u_("コンテンツ") in response.body.decode("utf8") 
+  #  assert response.status.startswith("200")

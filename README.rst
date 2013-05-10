@@ -26,6 +26,8 @@ Features
         * before_dispatch
         * before_action
         * before_start_response
+        * after_load_extension
+        * after_connect_database
 
     * Hooks example::
 

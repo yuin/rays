@@ -47,30 +47,35 @@ class TestDatabase(Base):
     except:
       pass
     app = self.app
+    @app.hook("after_connect_database")
+    def default_database_pragma(db):
+      db.execute("PRAGMA journal_mode = WAL")
+      db.execute("PRAGMA synchronous = NORMAL")
+
     if "declarative" in method.__name__:
       transaction = "commit_on_success"
     else:
       transaction = "programmatic"
     app.config("DatabaseExtension", {"connection":self.DB_FILE, "transaction":transaction})
-    self.db = app.ext.database.create_new_session()
-    self.db.autocommit = True
+    db = app.ext.database.create_new_session()
+    db.autocommit = True
     try:
-      self.db.execute(""" CREATE TABLE parents (
+      db.execute(""" CREATE TABLE parents (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT,
         p_id1 INTEGER,
         p_id2 INTEGER,
         created_at TIMESTAMP); """ )
-      self.db.execute(""" CREATE TABLE  children(
+      db.execute(""" CREATE TABLE  children(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         parent_id INTEGER NOT NULL,
         name TEXT,
         created_at TIMESTAMP); """ )
-      self.db.execute(""" CREATE INDEX  parent_id_idx on children(parent_id)""" )
+      db.execute(""" CREATE INDEX  parent_id_idx on children(parent_id)""" )
     except:
       pass
-    self.db.load_schema()
-    self.db.autocommit = False
+    db.close()
+    self.db = app.ext.database.create_new_session()
 
   def teardown_method(self, method):
     Base.teardown_method(self, method)

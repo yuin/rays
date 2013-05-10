@@ -111,8 +111,11 @@ class TestEmbpy(Base): # {{{
     except NameError as e:
       exc_type, exc_value, exc_traceback = sys.exc_info()
       output = "".join(traceback.format_exception(exc_type, exc_value, exc_traceback))
+      print(output)
       assert "File \"<string>\", line 6" in output
       assert "NameError: name 'text_values' is not defined" in output
+    else:
+      assert False
 # }}}
 
 class TestRendererAndHelper(Base):

@@ -20,7 +20,13 @@ class TestDefaultAttrDict(Base):
     obj = []
     d = DefaultAttrDict({"a":1, "b":2}, lambda: obj)
     assert obj == d.hoge
-    assert repr(d) == "<DefaultAttrDict {'a': 1, 'b': 2, 'hoge': []}>"
+    assert (repr(d) == "<DefaultAttrDict {'a': 1, 'b': 2, 'hoge': []}>" or
+            repr(d) == "<DefaultAttrDict {'a': 1, 'hoge': [], 'b': 2}>" or
+            repr(d) == "<DefaultAttrDict {'b': 2, 'a': 1, 'hoge': []}>" or
+            repr(d) == "<DefaultAttrDict {'b': 2, 'hoge': [], 'a': 1}>" or
+            repr(d) == "<DefaultAttrDict {'hoge': [], 'a': 1, 'b': 2}>" or
+            repr(d) == "<DefaultAttrDict {'hoge': [], 'b': 2, 'a': 1}>")
+            
   
   def test_setattr(self):
     d = DefaultAttrDict({"a":1, "b":2})

@@ -9,14 +9,14 @@ import sys, os, types, itertools, functools
 version_error = False
 if sys.version_info < (3,0,0):
   PY3 = False
-  if (2,7,0) > sys.version_info:
+  if (2,6,0) > sys.version_info:
     version_error = True
 else:
   PY3 = True
   if (3,2,0) > sys.version_info > (3,0,0):
     version_error = True
 if version_error:
-  sys.stderr.write("rays supports only > 3.2.0 or > 2.7.0")
+  sys.stderr.write("rays supports only > 3.2.0 or > 2.6.0")
   sys.exit(1)
 
 if PY3:
