@@ -50,17 +50,24 @@
             
   <div class="section" id="changes">
 <h1>Changes<a class="headerlink" href="#changes" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="april-24-2012">
-<h2>0.4.1 (April 24, 2012):<a class="headerlink" href="#april-24-2012" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="may-10-2012">
+<h2>0.4.1 (May 10, 2012):<a class="headerlink" href="#may-10-2012" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
+<li>Improved: <strong>rays now supports Python3.3 .</strong></li>
 <li>Fixed: Application#filter applies filters with unexpected order</li>
+<li>Fixed: ExtensionLoader tries to load non modile directories</li>
+<li>Fixed: can not upload multiple files.</li>
+<li>Fixed: Model class should call HookableClass#class_init.</li>
+<li>Improved: Database.execute now can take a without_transaction option.</li>
+<li>New: Application#generate_javascript_url_builder</li>
+<li>New: a new hook point(after_load_extension, after_connect_database)</li>
 </ul>
 </div>
 <div class="section" id="april-12-2012">
 <h2>0.4.0 (April 12, 2012):<a class="headerlink" href="#april-12-2012" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li>Improved: <strong>rays now supports Python3.2 .</strong></li>
-<li>Dropped:  <strong>rays drops Python2.7&gt; supports.</strong></li>
+<li>Dropped:  <strong>rays drops Python2.6&gt; supports.</strong></li>
 <li>New: Application.logger</li>
 <li>New: Application.copy_tls_property</li>
 <li>New: Applicaiton.get_url_builder</li>
@@ -128,7 +135,7 @@
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Changes</a><ul>
-<li><a class="reference internal" href="#april-24-2012">0.4.1 (April 24, 2012):</a></li>
+<li><a class="reference internal" href="#may-10-2012">0.4.1 (May 10, 2012):</a></li>
 <li><a class="reference internal" href="#april-12-2012">0.4.0 (April 12, 2012):</a></li>
 <li><a class="reference internal" href="#march-2-2010">0.3.0 (March 2, 2010):</a></li>
 <li><a class="reference internal" href="#august-15-2009">0.2.0 (August 15, 2009):</a></li>
