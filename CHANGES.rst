@@ -1,13 +1,20 @@
 Changes
 ============
-0.4.1 (April 24, 2012):
+0.4.1 (May 10, 2012):
 --------------------------------------------
+- Improved: **rays now supports Python3.3 .**
 - Fixed: Application#filter applies filters with unexpected order
+- Fixed: ExtensionLoader tries to load non modile directories
+- Fixed: can not upload multiple files.
+- Fixed: Model class should call HookableClass#class_init.
+- Improved: Database.execute now can take a without_transaction option.
+- New: Application#generate_javascript_url_builder
+- New: a new hook point(after_load_extension, after_connect_database)
 
 0.4.0 (April 12, 2012):
 --------------------------------------------
 - Improved: **rays now supports Python3.2 .**
-- Dropped:  **rays drops Python2.7> supports.**
+- Dropped:  **rays drops Python2.6> supports.**
 - New: Application.logger
 - New: Application.copy_tls_property
 - New: Applicaiton.get_url_builder
