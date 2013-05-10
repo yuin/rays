@@ -2,7 +2,7 @@ Overview
 ===================
 
 * rays is a WSGI compatible web framework designed for small web applications.
-* rays supports both python2.7 and python3.2.
+* rays supports python2.6, 2,7, 3.2, 3.3 .
 * rays handles multibyte-charcters correctly(It is important for me, So I'm a Japanese).
 
 Features
@@ -20,19 +20,19 @@ Features
 
 * Filters and Hooks: Writing DRY code.
     * Hooks will be called back at following hook points.
-        * before_initialize
-        * after_initialize
-        * before_call
-        * before_dispatch
-        * before_action
-        * before_start_response
-        * after_load_extension
-        * after_connect_database
+        * `before_initialize()`
+        * `after_initialize()`
+        * `before_call(env, start_response)`
+        * `before_dispatch()`
+        * `before_action()`
+        * `before_start_response()`
+        * `after_load_extension(name, extension)`
+        * `after_connect_database(database)`
 
     * Hooks example::
 
         @app.hook("before_start_response")
-        def status_log_hook(*a):
+        def status_log_hook():
           if app.res.is_success:
             app.logger.info("success")
           elif app.res.is_abort:
@@ -130,7 +130,7 @@ Asynchronous applications
 
 Extensions
 -------------------------
-rays has an API that allows developers to add new features to their applications.
+rays has API that allows developers to add new features to their applications.
 This api is consistent with 2 classes: ``rays.ExtensionLoader`` and ``rays.Extension``.
 
 To install your extensions, you need to configure the ``rays.ExtensionLoader``.
@@ -165,8 +165,10 @@ Creating your extension
 Requirements
 -------------
 
+* Python 2.6
 * Python 2.7 
 * Python 3.2
+* Python 3.3
 
 Installation
 -------------
