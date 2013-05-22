@@ -175,6 +175,7 @@ spec = dict(
   zip_safe=False,
   cmdclass=_cmds,
   classifiers = [
+      "Programming Language :: Python :: 2.6",
       "Programming Language :: Python :: 2.7",
       "Programming Language :: Python :: 3.2",
       "Programming Language :: Python :: 3.3",
@@ -191,7 +192,8 @@ spec = dict(
   tests_require = [
     "pytest",
     "pytest-cov",
-    "webtest"
+    "webtest",
+    "requests"
   ],
   entry_points="""
   """,

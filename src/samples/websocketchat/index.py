@@ -26,7 +26,7 @@ def chat():
       msg = ws.receive()
       if msg is None:
         break
-      app.logger.info("receive: '%s' from %s"%(str(msg.encode(locale.getpreferredencoding())), repr(ws.socket)))
+      app.logger.info(u_("receive: '%s' from %s")%(str(msg), repr(ws.socket)))
 
       error_sockets = set([])
       for s in SOCKETS:

@@ -34,7 +34,7 @@ class Base(object):
     if not os.path.isfile(file):
       return
 
-    for i in irange(retry_limit):
+    for i in range(retry_limit):
       try:
         os.remove(file)
         return
