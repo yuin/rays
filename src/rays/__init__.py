@@ -2311,7 +2311,10 @@ class SessionExtension(Extension): # {{{
     session_config = dict((k,v) for k,v in iter_items(dct) if k.startswith("cookie_"))
     store_config = dict((k,v) for k,v in iter_items(dct) if not k.startswith("cookie_"))
     store_type = store_config.pop("store", "File")
-    store_class = eval("%sSessionStore"%store_type)
+    if isinstance(store_type, string_types):
+      store_class = eval("%sSessionStore"%store_type)
+    else:
+      store_class = store_type
     store_config["app"] = app
     session_config["store"] = store_class(**store_config)
     session_config["app"]   = app

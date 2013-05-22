@@ -219,7 +219,7 @@ class TestSessionStoreBase(Base):
   def test_error_if_session_secret_is_null(self):
     with pytest.raises(ValueError):
       self.app.config("SessionExtension", {
-      "store":"Database", 
+      "store":DatabaseSessionStore, 
       "cookie_name":"test_cookie", 
       "cookie_path":"session"}) # does not have a value whose key is a "secret".
 
