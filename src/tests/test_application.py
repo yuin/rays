@@ -7,10 +7,7 @@ from rays import *
 from rays.compat import *
 from .base import *
 
-if compat_py3:
-  from io import BytesIO
-else:
-  from cStringIO import StringIO as BytesIO
+import_BytesIO()
 
 import pytest
 

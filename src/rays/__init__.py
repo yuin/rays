@@ -39,10 +39,7 @@ from hashlib import sha1
 import urllib.parse
 compat_import(py3="http.cookies", py2="Cookie")
 compat_import(py3="pickle", py2="cPickle")
-if compat_py3:
-  from io import BytesIO
-else:
-  from cStringIO import StringIO as BytesIO
+import_BytesIO()
 
 __author__ = "Yusuke Inuzuka"
 __version__ = "0.4.1"

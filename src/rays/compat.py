@@ -46,9 +46,12 @@ if sys.version_info >= (3,0,0):
     raise e(v).with_traceback(t)
 
   create_urllib_packages = lambda : None
-  def compat_import(py2, py3):
+  def compat_import(py2, py3, fromlist=None):
     f = sys._getframe(1)
-    exec_function(compile("import "+py3,"<string>","exec"), f.f_globals, f.f_locals)
+    if not fromlist:
+      exec_function(compile("import "+py3,"<string>","exec"), f.f_globals, f.f_locals)
+    else:
+      exec_function(compile("from "+py3+" import "+",".join(fromlist),"<string>","exec"), f.f_globals, f.f_locals)
 
   from functools import reduce
   from imp import reload
@@ -61,6 +64,10 @@ if sys.version_info >= (3,0,0):
   func_attr = lambda func, name: getattr(func, "__"+name+"__")
 
   method_type = lambda s,f,c: types.MethodType(s, f)
+
+  def import_BytesIO():
+    f = sys._getframe(1)
+    exec_function(compile("from io import BytesIO","<string>","exec"), f.f_globals, f.f_locals)
 
 
   def l_(buf):
@@ -96,7 +103,7 @@ else:
     exec object in (globals or {}), (locals or {})""", "<exec_function>", "exec"))
   eval(compile("""def reraise(e, v, t):\n  raise e, v, t""", "<reraise>", "exec"))
 
-  def compat_import(py2, py3):
+  def compat_import(py2, py3, fromlist=None):
     import types
     exec_function(compile("import "+py2,"<string>","exec"), globals(), locals())
     py2mod = sys.modules[py2]
@@ -114,7 +121,10 @@ else:
       if isinstance(py2mod, email.LazyImporter): py2mod.__file__
     sys.modules[py3] = py2mod
     f = sys._getframe(1)
-    exec_function(compile("import "+py3,"<string>","exec"), f.f_globals, f.f_locals)
+    if not fromlist:
+      exec_function(compile("import "+py3,"<string>","exec"), f.f_globals, f.f_locals)
+    else:
+      exec_function(compile("from "+py3+" import "+",".join(fromlist),"<string>","exec"), f.f_globals, f.f_locals)
 
   def create_urllib_packages():
     import robotparser, urllib, urllib2, urlparse
@@ -136,6 +146,10 @@ else:
   im_class = lambda im: im.im_class
   func_attr = lambda func, name: getattr(func, "func_"+name)
   method_type = lambda s,f,c: types.MethodType(s, f, c)
+
+  def import_BytesIO():
+    f = sys._getframe(1)
+    exec_function(compile("from cStringIO import StringIO as BytesIO","<string>","exec"), f.f_globals, f.f_locals)
 
   def l_(buf):
     return buf
