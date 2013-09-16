@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -13,7 +15,7 @@
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    './',
+        URL_ROOT:    '',
         VERSION:     '0.4.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
@@ -208,7 +210,7 @@ An autoreload feature is enabled in <tt class="docutils literal"><span class="pr
 
 <dl class="method">
 <dt id="rays.Application.config">
-<tt class="descname">config</tt><big>(</big><em>name</em>, <em>value=None</em><big>)</big><a class="headerlink" href="#rays.Application.config" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">config</tt><big>(</big><em>name</em>, <em>value=None</em>, <em>frame=None</em><big>)</big><a class="headerlink" href="#rays.Application.config" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets the valule for the configurations.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -216,9 +218,9 @@ An autoreload feature is enabled in <tt class="docutils literal"><span class="pr
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name" colspan="2">Available configuration parameters:</th></tr>
 <tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><ul class="first last">
-<li><p class="first">base(unicode)</p>
+<li><p class="first">base(str)</p>
 </li>
-<li><p class="first">charset(unicode)</p>
+<li><p class="first">charset(str)</p>
 </li>
 <li><p class="first">debug(Boolean)</p>
 </li>
@@ -227,10 +229,10 @@ An autoreload feature is enabled in <tt class="docutils literal"><span class="pr
 <li><dl class="first docutils">
 <dt>renderer <span class="classifier-delimiter">:</span> <span class="classifier">dict</span></dt>
 <dd><ul class="first last simple">
-<li>template_dir : unicode, default <tt class="docutils literal"><span class="pre">&quot;./templates&quot;</span></tt></li>
-<li>cache_dir    : unicode, default <tt class="docutils literal"><span class="pre">&quot;./caches&quot;</span></tt></li>
+<li>template_dir : str, default <tt class="docutils literal"><span class="pre">&quot;./templates&quot;</span></tt></li>
+<li>cache_dir    : str, default <tt class="docutils literal"><span class="pre">&quot;./caches&quot;</span></tt></li>
 <li>template_globals : dict</li>
-<li>encoding : unicode, default <tt class="docutils literal"><span class="pre">utf8</span></tt></li>
+<li>encoding : str, default <tt class="docutils literal"><span class="pre">utf8</span></tt></li>
 </ul>
 </dd>
 </dl>
@@ -355,10 +357,8 @@ copy these data to the child threads.</p>
 <dl class="method">
 <dt id="rays.Application.run">
 <tt class="descname">run</tt><big>(</big><em>server_func</em>, <em>host='127.0.0.1'</em>, <em>port=8000</em>, <em>middlewares=</em><span class="optional">[</span><span class="optional">]</span>, <em>**kw</em><big>)</big><a class="headerlink" href="#rays.Application.run" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>Runs this application as a server.</dt>
-<dd><tt class="docutils literal"><span class="pre">self.debug</span></tt> will enable an autoreload support.</dd>
-</dl>
+<dd><p>Runs this application as a server.
+<tt class="docutils literal"><span class="pre">self.debug</span></tt> will enable an autoreload support.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -633,10 +633,10 @@ as a prerequisite for using this class.</p>
 <tr class="field-odd field"><th class="field-name" colspan="2">Available configuration parameters:</th></tr>
 <tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><dl class="first last docutils">
 <dt>connection </dt>
-<dd><p class="first last">unicode, sqlite3 database file name.</p>
+<dd><p class="first last">str, sqlite3 database file name.</p>
 </dd>
 <dt>transaction </dt>
-<dd><p class="first">unicode, transaction behavior.</p>
+<dd><p class="first">str, transaction behavior.</p>
 <blockquote class="last">
 <div><ul class="simple">
 <li><tt class="docutils literal"><span class="pre">commit_on_success</span></tt> : When a request starts, rays starts a transaction. If the response is produced without problems, rays commits transactions. Otherwise, rays rolls back transactions.</li>
@@ -1161,13 +1161,13 @@ as a prerequisite for using this class.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name" colspan="2">Available configuration parameters:</th></tr>
 <tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><ul class="first last simple">
-<li>store : unicode, default <tt class="docutils literal"><span class="pre">&quot;File&quot;</span></tt></li>
+<li>store : str, default <tt class="docutils literal"><span class="pre">&quot;File&quot;</span></tt></li>
 <li>expires: integer expressed in seconds since now, default <tt class="docutils literal"><span class="pre">60*60*24</span></tt></li>
-<li>secret: unicode, <strong>required</strong></li>
-<li>cookie_name: unicode, default <tt class="docutils literal"><span class="pre">&quot;session_id&quot;</span></tt></li>
-<li>cookie_domain: unicode</li>
+<li>secret: str, <strong>required</strong></li>
+<li>cookie_name: str, default <tt class="docutils literal"><span class="pre">&quot;session_id&quot;</span></tt></li>
+<li>cookie_domain:str</li>
 <li>cookie_secure: boolean</li>
-<li>cookie_path:  unicode</li>
+<li>cookie_path: str</li>
 <li>cookie_expires: integer expressed in seconds since now</li>
 </ul>
 </td>
@@ -1260,9 +1260,9 @@ If the <tt class="docutils literal"><span class="pre">data</span></tt> is tamper
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name" colspan="2">Available configuration parameters:</th></tr>
 <tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><ul class="first last">
-<li><p class="first">url : unicode, such as &#8220;statics/&#8221;</p>
+<li><p class="first">url : str, such as &#8220;statics/&#8221;</p>
 </li>
-<li><p class="first">path : unicode, such as &#8220;/home/www/app/statics&#8221;</p>
+<li><p class="first">path : str, such as &#8220;/home/www/app/statics&#8221;</p>
 </li>
 <li><dl class="first docutils">
 <dt>cache <span class="classifier-delimiter">:</span> <span class="classifier">Integer, a cache expiry in secounds. default: 86400*365(a year)</span></dt>
@@ -1320,7 +1320,7 @@ If the <tt class="docutils literal"><span class="pre">data</span></tt> is tamper
 
 <dl class="function">
 <dt id="rays.to_snake_case">
-<tt class="descclassname">rays.</tt><tt class="descname">to_snake_case</tt><big>(</big><em>s, pat=[&lt;_sre.SRE_Pattern object at 0x36d35d0&gt;]</em><big>)</big><a class="headerlink" href="#rays.to_snake_case" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">rays.</tt><tt class="descname">to_snake_case</tt><big>(</big><em>s, pat=[&lt;_sre.SRE_Pattern object at 0x00000000044F4DB0&gt;]</em><big>)</big><a class="headerlink" href="#rays.to_snake_case" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
@@ -1386,7 +1386,7 @@ If the <tt class="docutils literal"><span class="pre">data</span></tt> is tamper
     </div>
     <div class="footer">
         &copy; Copyright 2009-2013, Yusuke Inuzuka.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b1.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>
 </html>
