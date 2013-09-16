@@ -42,7 +42,7 @@ compat_import(py3="pickle", py2="cPickle")
 import_BytesIO()
 
 __author__ = "Yusuke Inuzuka"
-__version__ = "0.4.1"
+__version__ = "0.4.2"
 __license__ = 'MIT'
 
 # core utilities {{{
