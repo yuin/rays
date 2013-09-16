@@ -6,6 +6,8 @@ import rays
 from rays.compat import *
 from .base import *
 
+import urllib.parse
+
 class TestRequest(Base):
 
   def test_get_header(self):
@@ -45,7 +47,7 @@ class TestRequest(Base):
   def test_input1(self):
     app = self.app
 
-    @app.get("(int:\d+)/(unicode:.*)")
+    @app.get("(int:\d+)/(str:.*)")
     def index(num_param, unicode_param):
       req = app.req
       assert num_param == 10
@@ -55,7 +57,7 @@ class TestRequest(Base):
     self.finish_app_config()
 
     response = self.browser.get(self.url("index", 10, u_("テスト"), 
-      _query="query=%s"%urlquote(u_("クエリ").encode("utf8"))))
+      _query="query=%s"%urllib.parse.quote(u_("クエリ").encode("utf8"))))
     assert response.body == b"index"
 
   def test_input_uploading_file(self):

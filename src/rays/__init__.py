@@ -36,8 +36,13 @@ import logging, json
 from datetime import datetime, timedelta
 from hashlib import sha1
 
+import urllib.parse
+compat_import(py3="http.cookies", py2="Cookie")
+compat_import(py3="pickle", py2="cPickle")
+import_BytesIO()
+
 __author__ = "Yusuke Inuzuka"
-__version__ = "0.4.1"
+__version__ = "0.4.2"
 __license__ = 'MIT'
 
 # core utilities {{{
@@ -105,7 +110,7 @@ def guess_decode(q ,lst = ["utf_8", "euc_jp", "cp932", "shift_jis"]):
   """ """
   if not q:
     return u_("")
-  if isinstance(q, unicode):
+  if isinstance(q, str):
     return q
   for codec in lst:
     try:
@@ -116,10 +121,10 @@ def guess_decode(q ,lst = ["utf_8", "euc_jp", "cp932", "shift_jis"]):
 
 def unquote_guess_decode(q):
   """ """
-  return guess_decode(urlunquote(q))
+  return guess_decode(urllib.parse.unquote(q))
 
 _htmlentity_trans_table = (("&", "&amp;"), ("<", "&lt;"), (">", "&gt;"), ("'", "&#39;"), ('"', "&quot;"))
-_htmlentity_trans_table_rev = list(imap(lambda v: (v[1], v[0]), _htmlentity_trans_table))
+_htmlentity_trans_table_rev = list(map(lambda v: (v[1], v[0]), _htmlentity_trans_table))
 
 def _trans(s, table):
   return reduce(lambda r,v: r.replace(v[0], v[1]), table, s)
@@ -407,7 +412,7 @@ class Action(PropertyCachable): # {{{
 
   @cached_property
   def param_types(self):
-    return list(imap(lambda s: eval(s[:-1]), 
+    return list(map(lambda s: eval(s[:-1]), 
       self.PARAM_REGEX.findall(self.full_path_pattern) or []))
 
   @cached_property
@@ -550,24 +555,25 @@ class Application(Hookable): # {{{
 
   renderer = property(get_renderer, set_renderer, None, """rays.Renderer object""")
 
-  def config(self, name, value=None):
+  def config(self, name, value=None, frame=None):
     """Sets the valule for the configurations.
 
     :Available configuration parameters:
-        - base(unicode)
-        - charset(unicode)
+        - base(str)
+        - charset(str)
         - debug(Boolean)
         - logger : logging.Logger object( in the Python standard libraries )
         - renderer : dict
-            - template_dir : unicode, default ``"./templates"``
-            - cache_dir    : unicode, default ``"./caches"``
+            - template_dir : str, default ``"./templates"``
+            - cache_dir    : str, default ``"./caches"``
             - template_globals : dict
-            - encoding : unicode, default ``utf8``
+            - encoding : str, default ``utf8``
         - ExtensionLoader: dict
             - module : extension module object, See Extension documentations for further details.
     """
     if isinstance(name, (list, tuple)):
-      return [self.config(k,v) for k,v in name]
+      f = sys._getframe(1)
+      return [self.config(k,v,f) for k,v in name]
 
     if name in ("base","charset", "debug", "logger"):
       setattr(self, name, value)
@@ -576,7 +582,12 @@ class Application(Hookable): # {{{
       ExtensionLoader(self, value["module"]).load()
 
     elif name.endswith("Extension"):
-      eval(name).app_config(self, value)
+      try:
+        klass = eval(name)
+      except:
+        f = frame or sys._getframe(1)
+        klass = eval(name, f.f_globals, f.f_locals)
+      klass.app_config(self, value)
 
     elif name == "renderer":
       for k,v in iter_items(value):
@@ -669,7 +680,7 @@ class Application(Hookable): # {{{
       parts = re.compile("\([^\)]+\)").split(self.actions_map[name].full_path_pattern)
       def encode(v):
         try:
-          return urlquote(v.encode(self.charset))
+          return urllib.parse.quote(v.encode(self.charset))
         except:
           return u_(v)
       def mkclosure(parts):
@@ -679,8 +690,8 @@ class Application(Hookable): # {{{
           if len(parts) == 1:
             path = "".join(parts)
           else:
-            a = list(imap(encode, args))
-            path = "".join(imap(lambda p:p[0]+p[1], izip(parts,a+[""])))
+            a = list(map(encode, args))
+            path = "".join(map(lambda p:p[0]+p[1], zip(parts,a+[""])))
           if _ssl or (_ssl is None and self.req.is_ssl):
             protocol = "https"
           else:
@@ -748,7 +759,7 @@ class Application(Hookable): # {{{
           find = True
           if action.method != method:
             continue
-          params = list(imap(lambda s: s[1](guess_decode(l_(s[0]))), izip(m.groups(), action.param_types)))
+          params = list(map(lambda s: s[1](guess_decode(l_(s[0]))), zip(m.groups(), action.param_types)))
           request.action = action
           request.params = params
           self.run_hook("before_action")
@@ -798,7 +809,7 @@ class Application(Hookable): # {{{
         return self.req._env['wsgi.file_wrapper'](content)
       else:
         return iter(lambda: content.read(8192), b'')
-    if isinstance(content, unicode):
+    if isinstance(content, str):
       bytes = content.encode(charset)
       return [bytes]
     else:
@@ -910,7 +921,7 @@ class Application(Hookable): # {{{
               args = [sys.executable] + sys.argv
               if sys.platform == "win32":
                 args = ['"%s"' % arg for arg in args]
-              for trial in irange(10):
+              for trial in range(10):
                 try:
                   os.execv(sys.executable, args)
                   return
@@ -1211,7 +1222,7 @@ class Request(PropertyCachable): # {{{
       else:
         parse_input(k, _decode(value), False)
 
-    for k,v in parse_qsl(self.env.get('QUERY_STRING',"")):
+    for k,v in urllib.parse.parse_qsl(self.env.get('QUERY_STRING',"")):
       if isinstance(v, string_types):
         v = unquote_guess_decode(v)
       parse_input(k,v,False)
@@ -1252,7 +1263,7 @@ class Request(PropertyCachable): # {{{
   @cached_property
   def cookies(self):
     """Returns a dictionary object with the cookies."""
-    cookie = SimpleCookie()
+    cookie = http.cookies.SimpleCookie()
     cookie.load(self.env.get('HTTP_COOKIE', ''))
     d = {}
     for k in cookie:
@@ -1399,7 +1410,7 @@ class Response(object): # {{{
     if ``unique`` is True, ``name`` header will be overwritten by this value.
     """
     if unique:
-      self._headers = [(k,v) for k,v in self._headers if k != name]
+      self.del_header(name)
     self._headers.append((name, n_(value)))
 
   def del_header(self, name):
@@ -1414,7 +1425,7 @@ class Response(object): # {{{
             Floating point number expressed in seconds since now
     """
     kargs["path"] = path
-    if isinstance(expires, str):
+    if isinstance(expires, string_types):
       kargs["expires"] = ""
     else:
       if expires < 0: 
@@ -1424,8 +1435,8 @@ class Response(object): # {{{
       kargs['domain'] = domain
     if secure:
       kargs['secure'] = secure
-    cookie = SimpleCookie()
-    cookie[name] = urlquote(guess_decode(value).encode(self.charset))
+    cookie = http.cookies.SimpleCookie()
+    cookie[name] = urllib.parse.quote(guess_decode(value).encode(self.charset))
     for key, val in iter_items(kargs):
       cookie[name][key] = val
     self.set_header('Set-Cookie', list(iter_items(cookie))[0][1].OutputString(), False)
@@ -1530,10 +1541,10 @@ class Response(object): # {{{
 # }}}
 
 # Embpy {{{
-class EmbpyString(unicode): pass
+class EmbpyString(str): pass
 class Embpy(object):
   BLOCK_START_PAT = re.compile(r".*:\s*$")
-  VERSION_SUFFIX = u_("").join(map(unicode, list(sys.version_info)))
+  VERSION_SUFFIX = u_("").join(map(str, list(sys.version_info)))
 
   def _lazy(lock):
     def deco(f):
@@ -1729,7 +1740,7 @@ class Helper(object): # {{{
   buffer_search_limit = 10
 
   def _buffer_frame_locals(self):
-    for i in irange(2, self.buffer_search_limit):
+    for i in range(2, self.buffer_search_limit):
       f = sys._getframe(i).f_locals
       if "__buffer" in f:
         return f
@@ -1897,9 +1908,9 @@ class DatabaseExtension(Extension):
 
   :Available configuration parameters:
       connection 
-          unicode, sqlite3 database file name.
+          str, sqlite3 database file name.
       transaction 
-          unicode, transaction behavior.
+          str, transaction behavior.
 
               - ``commit_on_success`` : When a request starts, rays starts a transaction. If the response is produced without problems, rays commits transactions. Otherwise, rays rolls back transactions.
               - ``commit_auto`` 
@@ -2039,7 +2050,7 @@ class Database(object): # {{{
     if is_debug:
       self.app.logger.debug(",".join(u_(a) for a in args) + ", "+ u_(kw))
     exception = None
-    for i in irange(self.RETRY_LIMIT):
+    for i in range(self.RETRY_LIMIT):
       try:
         return obj.execute(*args, **kw)
       except sqlite3.OperationalError as e:
@@ -2155,7 +2166,7 @@ class Database(object): # {{{
     print("Enter your SQL commands to execute in sqlite3.")
     print("Enter 'exit' to exit.")
     while True:
-      line = raw_input(">>")
+      line = input(">>")
       if line.strip() == "exit":
         break
       buffer += line
@@ -2172,7 +2183,7 @@ class Database(object): # {{{
           if isinstance(result, (int, long)):
             result = "OK, %d %s affected."%(result, result > 1 and "rows" or "row")
           elif isinstance(result, (list, tuple)):
-            result = "\n".join(["| %s |"%("\t| ".join(imap(u, row))) for row in result])
+            result = "\n".join(["| %s |"%("\t| ".join(map(u, row))) for row in result])
           print(result)
         except sqlite3.Error as e:
           print("An error occured:", e.args[0])
@@ -2258,13 +2269,13 @@ class SessionExtension(Extension): # {{{
   """Session management extension.
 
   :Available configuration parameters:
-       - store : unicode, default ``"File"``
+       - store : str, default ``"File"``
        - expires: integer expressed in seconds since now, default ``60*60*24``
-       - secret: unicode, **required**
-       - cookie_name: unicode, default ``"session_id"``
-       - cookie_domain: unicode
+       - secret: str, **required**
+       - cookie_name: str, default ``"session_id"``
+       - cookie_domain:str 
        - cookie_secure: boolean
-       - cookie_path:  unicode
+       - cookie_path: str
        - cookie_expires: integer expressed in seconds since now
   """
   def __init__(self, app, cookie_name="session_id", cookie_expires="", cookie_domain=None, 
@@ -2297,7 +2308,10 @@ class SessionExtension(Extension): # {{{
     session_config = dict((k,v) for k,v in iter_items(dct) if k.startswith("cookie_"))
     store_config = dict((k,v) for k,v in iter_items(dct) if not k.startswith("cookie_"))
     store_type = store_config.pop("store", "File")
-    store_class = eval("%sSessionStore"%store_type)
+    if isinstance(store_type, string_types):
+      store_class = eval("%sSessionStore"%store_type)
+    else:
+      store_class = store_type
     store_config["app"] = app
     session_config["store"] = store_class(**store_config)
     session_config["app"]   = app
@@ -2581,8 +2595,8 @@ class StaticFileExtension(Extension): # {{{
   """Static file serving extension.
 
   :Available configuration parameters:
-       - url : unicode, such as "statics/"
-       - path : unicode, such as "/home/www/app/statics"
+       - url : str, such as "statics/"
+       - path : str, such as "/home/www/app/statics"
        - cache : Integer, a cache expiry in secounds. default: 86400*365(a year)
                  Does not cache if the ``chache`` is negative.
   """
@@ -2621,7 +2635,7 @@ class StaticFileExtension(Extension): # {{{
   def on_before_initialize(self):
     self.hashes = {}
 
-    @self.app.get(self.url+"(unicode:.*)")
+    @self.app.get(self.url+"(str:.*)")
     def static_file(*a):
       path = self.app.req.params[-1]
       abs_path = self.get_normalized_abs_path(path)

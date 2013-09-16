@@ -7,6 +7,8 @@ from rays import *
 from rays.compat import *
 from .base import *
 
+import_BytesIO()
+
 import pytest
 
 class TestApplication(Base):
@@ -39,12 +41,19 @@ class TestApplication(Base):
     assert self.app._renderer == None
 
   def test_config(self):
+    check_dct = {}
+    class TestExtension(Extension):
+      @classmethod
+      def app_config(cls, app, dct):
+        check_dct["v"] = True
+
     self.app.config([
       ("base", "/"),
       ("charset", "utf8"),
       ("debug", True),
       ("logger",True),
       ("renderer", {"template_dir": "./t"}),
+      ("TestExtension", {}),
       ("app_ver", 1.0)
     ])
     self.finish_app_config()
@@ -55,6 +64,7 @@ class TestApplication(Base):
     assert self.app.logger == True
     assert self.app.renderer.template_dir == "./t"
     assert self.app.vars.app_ver == 1.0
+    assert check_dct["v"]
 
   def test_helper(self):
     @self.app.helper
@@ -399,7 +409,7 @@ class TestApplication(Base):
 
   def test_url_builder(self):
     app = self.app
-    @app.get("get/(int:\d+)/(unicode:[^/]+)/(int:\d+)")
+    @app.get("get/(int:\d+)/(str:[^/]+)/(int:\d+)")
     def get():
       return "ok"
     self.finish_app_config()
@@ -410,7 +420,7 @@ class TestApplication(Base):
 
     self.init_app({"wsgi.url_scheme": "https"})
     app = self.app
-    @app.get("get/(int:\d+)/(unicode:[^/]+)/(int:\d+)")
+    @app.get("get/(int:\d+)/(str:[^/]+)/(int:\d+)")
     def get():
       return "ok"
     self.finish_app_config()
@@ -440,7 +450,7 @@ class TestApplication(Base):
       foo
     self.finish_app_config()
 
-    for i in irange(1,4):
+    for i in range(1,4):
       response = self.browser.get(self.url("get%d"%i), expect_errors=True)
       assert response.status.startswith("500")
       assert b"ERROR" in response.body
@@ -511,7 +521,7 @@ class TestApplication(Base):
     @app.get("get1/(int:\d+)")
     def get1(id):
       pass
-    @app.get("get2/(int:\d+)/(unicode:\s+)")
+    @app.get("get2/(int:\d+)/(str:\s+)")
     def get2(id, name):
       pass
     self.finish_app_config()

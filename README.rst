@@ -312,7 +312,7 @@ index.py::
       if start != 1: append("<li><a href=\"%s\">1</a></li>"%helper.page_link(c, 1))
       if start > 2:  append("<li>&nbsp;&nbsp;.......&nbsp;&nbsp;</li>")
     
-      for i in irange(start, end+1):
+      for i in range(start, end+1):
         if i == page: 
           append("<li class=\"active\">%d</li>"%i)
         else:

@@ -1,6 +1,11 @@
 Changes
 ============
-0.4.1 (May 10, 2012):
+0.4.2 (Sep 16, 2013):
+--------------------------------------------
+- Improved: rays considers python3 as a **mainstream** python. New compat.py module provides the python3 forward compatibility.
+- Improved: SessionExtension now can take a SessionStoreBase class as a parameter.
+
+0.4.1 (May 10, 2013):
 --------------------------------------------
 - Improved: **rays now supports Python3.3 .**
 - Fixed: Application#filter applies filters with unexpected order
