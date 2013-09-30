@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>rays - A “LESS PAIN” lightweight WSGI compatible web framework &mdash; rays 0.4.1 documentation</title>
+    <title>rays - A “LESS PAIN” lightweight WSGI compatible web framework &mdash; rays 0.4.3 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.4.1',
+        VERSION:     '0.4.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="rays 0.4.1 documentation" href="index.html" /> 
+    <link rel="top" title="rays 0.4.3 documentation" href="index.html" /> 
   </head>
   <body>
     <div class="related">
@@ -37,7 +37,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="index.html">rays 0.4.1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">rays 0.4.3 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -180,7 +180,7 @@ THE SOFTWARE.</p>
 </dd>
 <dt>debug</dt>
 <dd><p class="first last">If this member is True, rays prints verbose message on its bevavior and 
-An autoreload feature is enabled in <tt class="docutils literal"><span class="pre">run_xxx()</span></tt> methods.</p>
+An autoreload feature is enabled in <tt class="docutils literal"><span class="pre">run_simple()</span></tt> methods.</p>
 </dd>
 <dt>host</dt>
 <dd><p class="first last">Host name such as &#8220;localhost&#8221;</p>
@@ -358,7 +358,7 @@ copy these data to the child threads.</p>
 <dt id="rays.Application.run">
 <tt class="descname">run</tt><big>(</big><em>server_func</em>, <em>host='127.0.0.1'</em>, <em>port=8000</em>, <em>middlewares=</em><span class="optional">[</span><span class="optional">]</span>, <em>**kw</em><big>)</big><a class="headerlink" href="#rays.Application.run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Runs this application as a server.
-<tt class="docutils literal"><span class="pre">self.debug</span></tt> will enable an autoreload support.</p>
+<tt class="docutils literal"><span class="pre">self.debug</span></tt> will enable an autoreload support at the simple server.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -392,8 +392,7 @@ copy these data to the child threads.</p>
 <dl class="method">
 <dt id="rays.Application.run_fapws">
 <tt class="descname">run_fapws</tt><big>(</big><em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#rays.Application.run_fapws" title="Permalink to this definition">¶</a></dt>
-<dd><p>Runs fapws server hosting this application.
-<strong>An auto-reloading does not work with run_fapws.</strong></p>
+<dd><p>Runs fapws server hosting this application.</p>
 <p>Accepts same parameters as the <tt class="docutils literal"><span class="pre">run</span></tt> method.</p>
 </dd></dl>
 
@@ -401,8 +400,7 @@ copy these data to the child threads.</p>
 <dt id="rays.Application.run_gevent">
 <tt class="descname">run_gevent</tt><big>(</big><em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#rays.Application.run_gevent" title="Permalink to this definition">¶</a></dt>
 <dd><p>Runs gevent server hosting this application. 
-See &#8220;Asynchronous applications&#8221; for further documentations.
-<strong>An auto-reloading does not work with run_gevent.</strong></p>
+See &#8220;Asynchronous applications&#8221; for further documentations.</p>
 <p>Accepts same parameters as the <tt class="docutils literal"><span class="pre">run</span></tt> method.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -424,7 +422,6 @@ See &#8220;Asynchronous applications&#8221; for further documentations.
 <dt id="rays.Application.run_gunicorn">
 <tt class="descname">run_gunicorn</tt><big>(</big><em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#rays.Application.run_gunicorn" title="Permalink to this definition">¶</a></dt>
 <dd><p>Runs gunicorn server hosting this application. 
-<strong>An auto-reloading does not work with run_gunicorn.</strong>
 This method use a configuration file if there exists a file with the name <tt class="docutils literal"><span class="pre">gunicorn_conf.py</span></tt>.
 This method accepts same parameters as the <tt class="docutils literal"><span class="pre">gunicorn</span></tt> command. See <tt class="docutils literal"><span class="pre">gunicorn</span> <span class="pre">-h</span></tt>.</p>
 <p>Example:</p>
@@ -443,6 +440,7 @@ This method accepts same parameters as the <tt class="docutils literal"><span cl
 <dt id="rays.Application.serve_forever">
 <tt class="descname">serve_forever</tt><big>(</big><em>**kw</em><big>)</big><a class="headerlink" href="#rays.Application.serve_forever" title="Permalink to this definition">¶</a></dt>
 <dd><p>Handles requests until shutdown.</p>
+<p>if the <tt class="docutils literal"><span class="pre">sys_argv</span></tt> argument is empty, serve_forever() automatically determine the command-line arguments from sys.argv.</p>
 </dd></dl>
 
 <dl class="method">
@@ -1320,7 +1318,7 @@ If the <tt class="docutils literal"><span class="pre">data</span></tt> is tamper
 
 <dl class="function">
 <dt id="rays.to_snake_case">
-<tt class="descclassname">rays.</tt><tt class="descname">to_snake_case</tt><big>(</big><em>s, pat=[&lt;_sre.SRE_Pattern object at 0x00000000044F4DB0&gt;]</em><big>)</big><a class="headerlink" href="#rays.to_snake_case" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">rays.</tt><tt class="descname">to_snake_case</tt><big>(</big><em>s, pat=[&lt;_sre.SRE_Pattern object at 0x0000000003CABE70&gt;]</em><big>)</big><a class="headerlink" href="#rays.to_snake_case" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
@@ -1381,7 +1379,7 @@ If the <tt class="docutils literal"><span class="pre">data</span></tt> is tamper
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="index.html">rays 0.4.1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">rays 0.4.3 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
