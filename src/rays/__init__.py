@@ -42,7 +42,7 @@ compat_import(py3="pickle", py2="cPickle")
 import_BytesIO()
 
 __author__ = "Yusuke Inuzuka"
-__version__ = "0.4.2"
+__version__ = "0.4.3"
 __license__ = 'MIT'
 
 # core utilities {{{
@@ -470,7 +470,7 @@ class Application(Hookable): # {{{
           Character encoding that this application uses
       debug
           If this member is True, rays prints verbose message on its bevavior and 
-          An autoreload feature is enabled in ``run_xxx()`` methods.
+          An autoreload feature is enabled in ``run_simple()`` methods.
       host
           Host name such as "localhost"
       ext
@@ -834,10 +834,13 @@ class Application(Hookable): # {{{
     """
 
     import signal
-    os.kill(os.getpid(), signal.SIGINT)
+    os.kill(os.getpid(), getattr(signal, 'SIGKILL', signal.SIGTERM))
 
   def serve_forever(self, **kw):
-    """Handles requests until shutdown."""
+    """Handles requests until shutdown.
+
+    if the ``sys_argv`` argument is empty, serve_forever() automatically determine the command-line arguments from sys.argv.
+    """
     import argparse
     parser = argparse.ArgumentParser()
     servers = [name.replace("run_", "") 
@@ -850,14 +853,15 @@ class Application(Hookable): # {{{
                         help='port number(default: %(default)s)')
     parser.add_argument('params', nargs='*',
                         help='parameters for the server.')
-    cmd_args = parser.parse_args()
+    argv = kw.pop("sys_argv", sys.argv[1:])
+    cmd_args = parser.parse_args(argv)
     if cmd_args.params:
       kw["params"] = cmd_args.params
     getattr(self, "run_{}".format(cmd_args.server))(host="0.0.0.0", port=cmd_args.port, **kw)
 
   def run(self, server_func, host="127.0.0.1", port=8000, middlewares = [], **kw):
     """Runs this application as a server.
-        ``self.debug`` will enable an autoreload support.
+        ``self.debug`` will enable an autoreload support at the simple server.
 
     :Parameters:
         server_func
@@ -870,26 +874,24 @@ class Application(Hookable): # {{{
             List of WSGI middlewares
     """
     server_name = server_func.__name__.replace("_func","")
-    if self.debug:
-      if server_name in ("gevent", "fapws"):
-        self.logger.warning("An auto-reloading does not work with this server.")
-      else:
-        server_func = self._run_with_autoreload(server_func)
-    if not hasattr(self, "server_started"):
-      self.server_started = True
-      if self.debug:
-        self.logger.info("%s server starting up... (%s:%d)"%(server_name.capitalize(), host, port))
-      try:
-        server_func(reduce(lambda r,v: v(r), middlewares, self), host, port, **kw)
-      except KeyboardInterrupt:
-        if self.debug:
-          self.logger.info("Server shutting down...")
-      delattr(self, "server_started")
+    if self.debug and os.environ.get("RAYS_RELOAD_MAIN") != "true":
+      self.logger.info("%s server starting up... (%s:%d)"%(server_name.capitalize(), host, port))
+
+    if self.debug and server_name == "simple":
+      server_func = self._run_with_autoreload(server_func)
+      import socket
+      soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+      soc.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+      soc.bind((host, port))
+      soc.close()
+    try:
+      server_func(reduce(lambda r,v: v(r), middlewares, self), host, port, **kw)
+    except KeyboardInterrupt:
+      sys.exit(0)
 
   def _run_with_autoreload(self, run_server_func):
     def f(app, host, port, **kw):
-      import imp
-
+      import signal, imp, subprocess
       mtimes = {}
       def update_mtime(file):
         try:
@@ -907,32 +909,38 @@ class Application(Hookable): # {{{
       for mod in iter_keys(sys.modules):
         if imp.is_builtin(mod) != 0 or not sys.modules[mod] or \
             mod == __name__ or not hasattr(sys.modules[mod], "__file__") or \
-            not sys.modules[mod].__file__.startswith(main_dir): 
+            not sys.modules[mod].__file__.startswith(main_dir):
           continue
         update_mtime(sys.modules[mod].__file__)
 
-      def run():
-        while hasattr(app, "server_started"):
-          for file in mtimes:
-            if update_mtime(file):
-              app.stop()
-              # waiting for completion of shutdown...
-              while hasattr(app, "server_started"): time.sleep(0.1)
-              args = [sys.executable] + sys.argv
-              if sys.platform == "win32":
-                args = ['"%s"' % arg for arg in args]
-              for trial in range(10):
-                try:
-                  os.execv(sys.executable, args)
-                  return
-                except OSError as e:
-                  if e.errno != 45:
-                    raise
-                  time.sleep(0.1)
-              else:
-                raise
-      threading.Thread(target=run).start()
-      run_server_func(app, host, port, **kw)
+      if os.environ.get("RAYS_RELOAD_MAIN") == "true":
+        threading.Thread(target=lambda : run_server_func(app, host, port, **kw)).start()
+        try:
+          while True:
+            for file in mtimes:
+              if update_mtime(file):
+                os.kill(os.getpid(), 3)
+            time.sleep(1)
+        except KeyboardInterrupt as e:
+          app.stop()
+      try:
+        args = [sys.executable] + sys.argv
+        new_environ = os.environ.copy()
+        new_environ['RAYS_RELOAD_MAIN'] = 'true'
+        if "win" in sys.platform and not compat_py3:
+          for key, value in iter_items(new_environ):
+            if isinstance(value, str):
+              new_environ[key] = value.encode(sys.getfilesystemencoding())
+        count = 0
+        while True:
+          if count > 0:
+            self.logger.info("restarted")
+          count += 1
+          ret = subprocess.call(args, env=new_environ)
+          if ret != 3:
+            sys.exit(ret)
+      except KeyboardInterrupt as e:
+        pass
     return f
 
   def run_cgi(self, middlewares = []):
@@ -966,7 +974,6 @@ class Application(Hookable): # {{{
 
   def run_fapws(self, *args, **kw):
     """Runs fapws server hosting this application.
-    **An auto-reloading does not work with run_fapws.**
     
     Accepts same parameters as the ``run`` method.
     """
@@ -983,7 +990,6 @@ class Application(Hookable): # {{{
   def run_gevent(self, *args, **kw):
     """Runs gevent server hosting this application. 
     See "Asynchronous applications" for further documentations.
-    **An auto-reloading does not work with run_gevent.**
     
     Accepts same parameters as the ``run`` method.
 
@@ -1003,7 +1009,6 @@ class Application(Hookable): # {{{
 
   def run_gunicorn(self, *args, **kw):
     """Runs gunicorn server hosting this application. 
-    **An auto-reloading does not work with run_gunicorn.**
     This method use a configuration file if there exists a file with the name ``gunicorn_conf.py``.
     This method accepts same parameters as the ``gunicorn`` command. See ``gunicorn -h``.
 

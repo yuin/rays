@@ -1,5 +1,11 @@
 Changes
 ============
+0.4.3 (Sep 30, 2013):
+--------------------------------------------
+- Fixed: autoreloading does not work with ``run_simple`` .
+- Fixed: ``test_session.py`` failed on windows platforms due to unclosed file handles.
+- Improved: ``Application.serve_forever`` now can take a ``sys_argv`` argument.
+
 0.4.2 (Sep 16, 2013):
 --------------------------------------------
 - Improved: rays considers python3 as a **mainstream** python. New compat.py module provides the python3 forward compatibility.
