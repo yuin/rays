@@ -34,13 +34,15 @@ class Base(object):
     if not os.path.isfile(file):
       return
 
+    e = None
     for i in range(retry_limit):
       try:
         os.remove(file)
         return
       except Exception as e:
         time.sleep(0.1)
-    reraise(e.__class__, e, sys.exc_info()[-1])
+    if e:
+      reraise(e.__class__, e, sys.exc_info()[-1])
 
   def finish_app_config(self):
     self.browser.get("/_dummy")
